@@ -1,0 +1,45 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: lms-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: lms
+      MYSQL_USER: lms
+      MYSQL_PASSWORD: lms
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-ulms", "-plms"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: lms-api
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__MySql: "Server=mysql;Port=3306;Database=lms;User=lms;Password=lms;TreatTinyAsBoolean=true"
+      Database__ServerVersion: "8.0.36-mysql"
+      # Override these secrets for real deployments.
+      Jwt__SigningKey: "compose-dev-signing-key-change-me-0123456789-abcdefghij"
+      Jwt__Issuer: "LmsApi"
+      Jwt__Audience: "LmsClient"
+      # Provide your Anam.ai key to enable the AI trainer session endpoint.
+      AiTrainer__Anam__ApiKey: "${ANAM_API_KEY:-}"
+    ports:
+      - "${API_PORT:-8080}:8080"
+
+volumes:
+  mysql-data:

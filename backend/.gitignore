@@ -1,0 +1,20 @@
+# Build output
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+*.user
+
+# Logs
+logs/
+*.log
+
+# Local secrets / environment-specific config (contains API keys)
+appsettings.Development.json
+appsettings.Local.json
+.env
+
+# IDE
+.vs/
+.vscode/
+.idea/
