@@ -1,0 +1,23 @@
+# Standalone compose for the LMS frontend. It builds the SPA image and reverse-proxies
+# /api to the backend. Point API_UPSTREAM at your running backend API.
+#
+# Typical usage (backend already running via ../backend docker compose):
+#   docker compose up --build -d
+#   open http://localhost:3000
+#
+# If the backend runs in another compose network, either attach this service to that
+# network or set API_UPSTREAM to a reachable host (e.g. http://host.docker.internal:8080).
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: lms-frontend:latest
+    ports:
+      - '${FRONTEND_PORT:-3000}:80'
+    environment:
+      # Where the SPA's /api calls are proxied. Override to match your backend.
+      API_UPSTREAM: ${API_UPSTREAM:-http://host.docker.internal:8080}
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    restart: unless-stopped
