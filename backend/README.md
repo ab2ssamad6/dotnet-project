@@ -113,7 +113,7 @@ startup it waits for the database, applies migrations, and seeds data automatica
 4. **Verify it's up.** Hit the health endpoint and open Swagger:
 
    ```bash
-   curl http://localhost:8080/health          # -> Healthy
+   curl http://localhost:8080/health          # -> {"status":"healthy"}
    ```
 
    Swagger UI: <http://localhost:8080/swagger>. Log in with a [seeded account](#seeded-accounts).
