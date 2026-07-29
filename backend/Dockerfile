@@ -19,7 +19,10 @@ RUN dotnet publish src/Lms.Api/Lms.Api.csproj -c Release -o /app/publish /p:UseA
 # ---- Runtime stage ----
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
-ENV ASPNETCORE_URLS=http://+:8080
+# The base image already listens on 8080; the entrypoint switches to $PORT when a managed
+# host (Railway, Fly.io, Cloud Run, ...) injects one.
 EXPOSE 8080
 COPY --from=build /app/publish ./
-ENTRYPOINT ["dotnet", "Lms.Api.dll"]
+COPY docker-entrypoint.sh ./
+RUN chmod +x ./docker-entrypoint.sh
+ENTRYPOINT ["./docker-entrypoint.sh"]

@@ -68,7 +68,7 @@ public static class ApiServiceCollectionExtensions
 
     private static void AddCorsPolicy(this IServiceCollection services, IConfiguration configuration)
     {
-        var origins = configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? Array.Empty<string>();
+        var origins = ReadAllowedOrigins(configuration);
         services.AddCors(options =>
             options.AddPolicy(CorsPolicy, policy =>
             {
@@ -77,6 +77,25 @@ public static class ApiServiceCollectionExtensions
                 else
                     policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
             }));
+    }
+
+    /// <summary>
+    /// Reads the allowed CORS origins from either the JSON array or a single comma-separated value.
+    /// A scalar value wins: an environment variable (<c>Cors__AllowedOrigins</c>) cannot replace the
+    /// per-index keys of the array in appsettings.json, so deployments would otherwise be stuck with
+    /// the localhost defaults.
+    /// </summary>
+    private static string[] ReadAllowedOrigins(IConfiguration configuration)
+    {
+        var section = configuration.GetSection("Cors:AllowedOrigins");
+        var scalar = section.Value;
+
+        var origins = !string.IsNullOrWhiteSpace(scalar)
+            ? scalar.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            : section.Get<string[]>() ?? Array.Empty<string>();
+
+        // WithOrigins compares literally, so a trailing slash would never match a browser's Origin header.
+        return origins.Select(origin => origin.TrimEnd('/')).ToArray();
     }
 
     private static void AddRateLimiting(this IServiceCollection services)

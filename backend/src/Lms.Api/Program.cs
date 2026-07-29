@@ -5,6 +5,7 @@ using Lms.Application;
 using Lms.Infrastructure;
 using Lms.Infrastructure.Persistence;
 using Lms.Infrastructure.Persistence.Seed;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -31,6 +32,23 @@ try
     if (!app.Environment.IsEnvironment("Testing"))
     {
         await app.InitializeDatabaseAsync();
+    }
+
+    // Hosted behind a platform load balancer (Railway, Fly.io, ...) the real client address and
+    // scheme only exist in the X-Forwarded-* headers; without this the per-IP rate limiter would
+    // partition every visitor into the proxy's single address.
+    if (app.Configuration.GetValue("Security:UseForwardedHeaders", false))
+    {
+        var forwardedHeaders = new ForwardedHeadersOptions
+        {
+            ForwardedHeaders = ForwardedHeaders.XForwardedFor
+                | ForwardedHeaders.XForwardedProto
+                | ForwardedHeaders.XForwardedHost
+        };
+        // The platform's proxy address is dynamic, so no fixed allow-list can be configured.
+        forwardedHeaders.KnownNetworks.Clear();
+        forwardedHeaders.KnownProxies.Clear();
+        app.UseForwardedHeaders(forwardedHeaders);
     }
 
     app.UseGlobalExceptionHandling();

@@ -37,6 +37,10 @@ ANAM_API_KEY=<key> API_PORT=8085 docker compose up --build -d
 
 There is no linter/formatter configured beyond the compiler; `AutoMapper 13` triggers a known `NU1903` advisory warning on every build (see README security note) — it is expected, not a regression.
 
+## Deployment (Railway, prebuilt GHCR image)
+
+Production runs on **Railway**: a Railway MySQL service plus the API as a prebuilt image pulled from **ghcr.io** — nothing is compiled on Railway. `.github/workflows/backend-image.yml` builds `backend/` and pushes `ghcr.io/<owner>/lms-api:{latest,sha-<short>}` (auth via the built-in `GITHUB_TOKEN`, `linux/amd64` only); README "Deploy to Railway" has the operator steps. Three things make the image host-agnostic and should not be undone: `backend/docker-entrypoint.sh` sets `ASPNETCORE_URLS` from the platform-injected `$PORT` (so the Dockerfile must *not* pin `ASPNETCORE_URLS`, or the port probe fails); `Security:UseForwardedHeaders` enables `UseForwardedHeaders` with the known-proxy lists cleared, without which the per-IP rate limiter buckets every visitor into the edge proxy's address; and `Cors:AllowedOrigins` accepts a comma-separated *scalar* (which takes precedence) because an env var cannot overwrite the JSON array's per-index keys. The API reaches MySQL over Railway's private network (`${{MySQL.MYSQLHOST}}` → `mysql.railway.internal`), which requires both services to live in the *same project*; Railway's MySQL ships a ready database named `railway`, so migrations only create tables.
+
 ## Architecture
 
 Clean Architecture with strict dependency direction **Api → Infrastructure → Application → Domain**. Application defines interfaces; Infrastructure implements them. Understanding these cross-cutting conventions requires reading several files:
