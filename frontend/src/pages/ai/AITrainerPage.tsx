@@ -1,25 +1,52 @@
-import { useState } from 'react';
+import { useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Card, CardBody, Icons, Select } from '@/components/ui';
 import { PageHeader } from '@/components/common/PageHeader';
 import { AITrainerPanel } from '@/features/ai/AITrainerPanel';
 import { useAsync } from '@/hooks/useAsync';
+import { useAuth } from '@/hooks/useAuth';
 import { moduleService, trainingService } from '@/services';
 
 export function AITrainerPage() {
-  const [trainingId, setTrainingId] = useState('');
-  const [moduleId, setModuleId] = useState('');
+  const { isStudent } = useAuth();
+  // Kept in the URL so /ai-trainer?trainingId=…&moduleId=… can be linked to from a
+  // training or lesson page, and so a refresh keeps the same subject.
+  const [params, setParams] = useSearchParams();
+  const trainingId = params.get('trainingId') ?? '';
+  const moduleId = params.get('moduleId') ?? '';
 
-  const trainings = useAsync(() => trainingService.list({ page: 1, pageSize: 100 }), []);
+  const setScope = useCallback(
+    (next: { trainingId: string; moduleId: string }) => {
+      const updated = new URLSearchParams(params);
+      if (next.trainingId) updated.set('trainingId', next.trainingId);
+      else updated.delete('trainingId');
+      if (next.moduleId) updated.set('moduleId', next.moduleId);
+      else updated.delete('moduleId');
+      setParams(updated, { replace: true });
+    },
+    [params, setParams],
+  );
+
+  // Students only get published trainings; staff can also pick up drafts they are working on.
+  const trainings = useAsync(
+    () =>
+      isStudent
+        ? trainingService.catalog({ page: 1, pageSize: 100 })
+        : trainingService.list({ page: 1, pageSize: 100 }),
+    [isStudent],
+  );
   const modules = useAsync(
     () => (trainingId ? moduleService.listByTraining(trainingId) : Promise.resolve([])),
     [trainingId],
   );
 
+  const selectedTraining = (trainings.data?.items ?? []).find((t) => t.id === trainingId);
+
   return (
     <div>
       <PageHeader
         title="AI Trainer"
-        description="Chat with an AI-powered avatar trainer. Optionally scope the session to a specific module."
+        description="Chat with an AI-powered avatar trainer. Pick a training and it will tutor you on that subject."
       />
 
       <div className="grid gap-6 lg:grid-cols-[320px_1fr]">
@@ -31,17 +58,14 @@ export function AITrainerPage() {
                 label="Training (optional)"
                 placeholder="Any training"
                 value={trainingId}
-                onChange={(e) => {
-                  setTrainingId(e.target.value);
-                  setModuleId('');
-                }}
+                onChange={(e) => setScope({ trainingId: e.target.value, moduleId: '' })}
                 options={(trainings.data?.items ?? []).map((t) => ({ value: t.id, label: t.title }))}
               />
               <Select
                 label="Module (optional)"
-                placeholder={trainingId ? 'Any module' : 'Select a training first'}
+                placeholder={trainingId ? 'Whole training' : 'Select a training first'}
                 value={moduleId}
-                onChange={(e) => setModuleId(e.target.value)}
+                onChange={(e) => setScope({ trainingId, moduleId: e.target.value })}
                 disabled={!trainingId || modules.loading}
                 options={[...(modules.data ?? [])]
                   .sort((a, b) => a.order - b.order)
@@ -49,13 +73,24 @@ export function AITrainerPage() {
               />
               <div className="flex items-start gap-2 rounded-lg bg-slate-50 p-3 text-xs text-slate-500">
                 <Icons.info size={16} className="mt-0.5 shrink-0" />
-                <p>Scoping to a module primes the avatar with that module's context when available.</p>
+                <p>
+                  {trainingId
+                    ? moduleId
+                      ? 'The avatar introduces itself as tutor of this training and focuses on the selected module.'
+                      : 'The avatar introduces itself as tutor of this training and knows its full curriculum.'
+                    : 'Pick a training to have the avatar introduce itself as its tutor and teach its curriculum.'}
+                </p>
               </div>
             </CardBody>
           </Card>
         </div>
 
-        <AITrainerPanel key={moduleId || trainingId || 'global'} moduleId={moduleId || null} />
+        <AITrainerPanel
+          key={`${trainingId}:${moduleId}`}
+          trainingId={trainingId || null}
+          moduleId={moduleId || null}
+          subjectLabel={selectedTraining?.title ?? null}
+        />
       </div>
     </div>
   );

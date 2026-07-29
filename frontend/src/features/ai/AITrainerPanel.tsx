@@ -16,6 +16,10 @@ interface TranscriptLine {
 
 interface Props {
   moduleId?: string | null;
+  /** Scopes the avatar to a training so it introduces itself as tutor of that subject. */
+  trainingId?: string | null;
+  /** Subject name shown in the header before the session confirms it. */
+  subjectLabel?: string | null;
   personaName?: string | null;
   compact?: boolean;
 }
@@ -24,8 +28,11 @@ interface Props {
  * Reusable AI Trainer panel. Fetches a streaming session token from the API,
  * connects the Anam.ai avatar to a <video> element, and offers Start/Stop,
  * ask-a-question, mic and speaker controls with full status + error handling.
+ *
+ * The persona's subject knowledge is baked into the session token server-side (the SDK's
+ * createClient takes no persona config), so scoping happens via trainingId/moduleId on start.
  */
-export function AITrainerPanel({ moduleId, personaName, compact }: Props) {
+export function AITrainerPanel({ moduleId, trainingId, subjectLabel, personaName, compact }: Props) {
   const videoId = useId().replace(/:/g, '');
   const clientRef = useRef<AnamClient | null>(null);
   const sessionTokenRef = useRef<string | null>(null);
@@ -38,6 +45,9 @@ export function AITrainerPanel({ moduleId, personaName, compact }: Props) {
   const [asking, setAsking] = useState(false);
   const [transcript, setTranscript] = useState<TranscriptLine[]>([]);
   const [collapsed, setCollapsed] = useState(compact ?? false);
+  // Confirmed by the API on start; falls back to the caller's label beforehand.
+  const [primedSubject, setPrimedSubject] = useState<string | null>(null);
+  const subject = primedSubject ?? subjectLabel ?? null;
 
   const stop = useCallback(async () => {
     const token = sessionTokenRef.current;
@@ -69,8 +79,13 @@ export function AITrainerPanel({ moduleId, personaName, compact }: Props) {
     setError(null);
     setTranscript([]);
     try {
-      const session = await aiTrainerService.startSession({ moduleId: moduleId ?? null, personaName: personaName ?? null });
+      const session = await aiTrainerService.startSession({
+        moduleId: moduleId ?? null,
+        trainingId: trainingId ?? null,
+        personaName: personaName ?? null,
+      });
       sessionTokenRef.current = session.sessionToken;
+      setPrimedSubject(session.subjectTitle ?? null);
 
       const mod = await loadAnam();
       const events = resolveEvents(mod);
@@ -121,13 +136,16 @@ export function AITrainerPanel({ moduleId, personaName, compact }: Props) {
       if (clientRef.current?.talk) {
         await clientRef.current.talk(text);
       }
-      // …and fetch a textual answer from the backend for the transcript.
+      // …and fetch a textual answer from the backend for the transcript. Only show it when the
+      // backend actually answered: otherwise it is a non-live placeholder, and the real reply
+      // arrives by voice through the avatar (and via MESSAGE_HISTORY_UPDATED).
       const res = await aiTrainerService.ask({
         sessionToken: sessionTokenRef.current ?? '',
         question: text,
         moduleId: moduleId ?? null,
+        trainingId: trainingId ?? null,
       });
-      if (res.answer) {
+      if (res.live && res.answer) {
         setTranscript((t) => [...t, { id: crypto.randomUUID(), role: 'ai', text: res.answer }]);
       }
     } catch (err) {
@@ -171,7 +189,10 @@ export function AITrainerPanel({ moduleId, personaName, compact }: Props) {
             <Icons.ai size={20} />
           </span>
           <div>
-            <p className="text-sm font-semibold text-slate-800">AI Trainer</p>
+            <p className="text-sm font-semibold text-slate-800">
+              AI Trainer
+              {subject && <span className="font-normal text-slate-500"> · {subject}</span>}
+            </p>
             <StatusPill status={status} />
           </div>
         </div>
@@ -207,7 +228,11 @@ export function AITrainerPanel({ moduleId, personaName, compact }: Props) {
                     <span className="flex h-14 w-14 items-center justify-center rounded-full bg-white/10">
                       <Icons.ai size={30} />
                     </span>
-                    <p className="text-sm">Start a session to chat with your AI trainer.</p>
+                    <p className="max-w-xs px-4 text-sm">
+                      {subject
+                        ? `Start a session to be tutored on ${subject}.`
+                        : 'Start a session to chat with your AI trainer.'}
+                    </p>
                   </>
                 )}
               </div>

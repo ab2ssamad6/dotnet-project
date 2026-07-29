@@ -372,6 +372,8 @@ export interface DashboardDto {
 export interface StartSessionRequest {
   moduleId?: string | null;
   personaName?: string | null;
+  /** Scopes the avatar to a training so it tutors that subject. Implied when moduleId is set. */
+  trainingId?: string | null;
 }
 
 export interface StartSessionResponse {
@@ -379,12 +381,17 @@ export interface StartSessionResponse {
   provider: string;
   moduleId?: string | null;
   issuedAt: string;
+  trainingId?: string | null;
+  /** Title of the subject the persona was primed with, for labelling the session. */
+  subjectTitle?: string | null;
+  personaName?: string | null;
 }
 
 export interface AskQuestionRequest {
   sessionToken: string;
   question: string;
   moduleId?: string | null;
+  trainingId?: string | null;
 }
 
 export interface AskQuestionResponse {

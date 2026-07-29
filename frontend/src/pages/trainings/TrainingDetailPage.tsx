@@ -92,6 +92,14 @@ export function TrainingDetailPage() {
               <DifficultyBadge value={t.difficulty} />
             </div>
             <div className="flex gap-2">
+              <Button
+                variant="secondary"
+                size="sm"
+                leftIcon={<Icons.ai size={15} />}
+                onClick={() => navigate(`/ai-trainer?trainingId=${id}`)}
+              >
+                Train with AI
+              </Button>
               <Button variant="secondary" size="sm" leftIcon={<Icons.edit size={15} />} onClick={() => navigate('/trainings')}>
                 Back
               </Button>

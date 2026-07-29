@@ -186,7 +186,7 @@ function ModuleContent({
         </Card>
       )}
 
-      {module?.aiAvatarEnabled && <AITrainerPanel moduleId={moduleId} compact />}
+      {module?.aiAvatarEnabled && <AITrainerPanel trainingId={trainingId} moduleId={moduleId} compact />}
 
       {loading ? (
         <div className="flex justify-center py-10 text-slate-400">

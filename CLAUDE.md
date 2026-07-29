@@ -21,7 +21,7 @@ All commands run from `backend/`.
 
 ```bash
 dotnet build Lms.sln                 # build the solution
-dotnet test Lms.sln                  # run all tests (7 unit + 6 integration)
+dotnet test Lms.sln                  # run all tests (14 unit + 11 integration)
 dotnet test tests/Lms.UnitTests      # one project
 dotnet test --filter "FullyQualifiedName~AuthFlowTests.Register_Login"   # single test / class
 dotnet run --project src/Lms.Api     # run locally (needs a reachable MySQL per appsettings)
@@ -67,3 +67,9 @@ When adding a child entity to an **already-tracked** parent's navigation collect
 ## Seeded accounts (dev)
 
 `admin@lms.local` / `Admin#12345`, `trainer@lms.local` / `Trainer#12345`, `student@lms.local` / `Student#12345` (configurable under `Seed`). Secrets (real Anam key, JWT dev key) live only in the git-ignored `appsettings.Development.json`; production uses env vars.
+
+## Demo data
+
+On every non-`Testing` boot `DbInitializer` delegates to `Persistence/Seed/DemoData/DemoDataSeeder`, which seeds four fully written courses (Machine Learning Foundations, Building APIs with ASP.NET Core, Blockchain Fundamentals, Cyber Security Essentials — 6 modules each, 132 questions total), a Draft "Kubernetes in Practice", three extra trainers and three extra students (all `Demo#12345`), plus 8 enrollments with module completions and quiz attempts. Set `Seed:SeedSampleData=false` (env `Seed__SeedSampleData`) to start with an empty catalogue; the integration-test factory already does.
+
+Each course is one file returning a pure `Training` graph, built through the helpers in `DemoData/DemoContent.cs` which assign module/activity `Order` from position — never number them by hand. Lesson `Content` is rendered as **plain text** (`whitespace-pre-line`, no markdown renderer), so use blank lines and `-` bullets only. Seeding is gated per course by title, per enrollment by `(StudentId, TrainingId)`, and per user by e-mail, so it converges rather than duplicating; a course found with *fewer* modules than the demo version is treated as old thin sample data and replaced (cascading away its enrollments). `docker compose down -v` gets a pristine database.
