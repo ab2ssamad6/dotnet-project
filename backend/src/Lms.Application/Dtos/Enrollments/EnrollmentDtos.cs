@@ -38,7 +38,6 @@ public record ProgressDto(
     EnrollmentStatus Status,
     IReadOnlyList<ModuleProgressDto> Modules);
 
-/// <summary>Placeholder for the future certificate feature (see roadmap).</summary>
 public record CertificateDto(
     Guid EnrollmentId,
     Guid TrainingId,

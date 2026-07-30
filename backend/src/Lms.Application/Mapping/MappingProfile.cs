@@ -6,11 +6,6 @@ using Lms.Domain.Entities;
 
 namespace Lms.Application.Mapping;
 
-/// <summary>
-/// AutoMapper configuration for the straightforward entity → DTO projections.
-/// Aggregates that need joined names or polymorphic shaping (Training, activities)
-/// are projected explicitly inside their services for clarity and query efficiency.
-/// </summary>
 public class MappingProfile : Profile
 {
     public MappingProfile()

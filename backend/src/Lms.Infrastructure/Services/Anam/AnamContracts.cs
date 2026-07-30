@@ -2,8 +2,6 @@ using System.Text.Json.Serialization;
 
 namespace Lms.Infrastructure.Services.Anam;
 
-// Wire contracts for the Anam.ai session-token endpoint (mirrors the Node prototype payload).
-
 internal record AnamSessionTokenRequest([property: JsonPropertyName("personaConfig")] AnamPersonaConfig PersonaConfig);
 
 internal record AnamPersonaConfig(

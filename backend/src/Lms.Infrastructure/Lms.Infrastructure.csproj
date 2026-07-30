@@ -10,7 +10,6 @@
     <ProjectReference Include="..\Lms.Application\Lms.Application.csproj" />
   </ItemGroup>
 
-  <!-- Grants access to ASP.NET Core types (IHttpContextAccessor, Identity password hasher, etc.) -->
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>

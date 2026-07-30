@@ -4,7 +4,6 @@ import { QUESTION_TYPE_OPTIONS } from '@/constants/enums';
 import { QuestionType } from '@/types';
 import type { AssessmentFormValues } from './activitySchemas';
 
-/** Nested answers editor for a single question. */
 function AnswersEditor({
   control,
   register,

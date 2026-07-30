@@ -36,8 +36,6 @@ public static class ApiServiceCollectionExtensions
         })
         .AddJwtBearer();
 
-        // Resolve JwtOptions at runtime (via the options pattern) so validation always uses the
-        // final merged configuration — matching how the token signer resolves the same options.
         services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme)
             .Configure<IOptions<JwtOptions>>((bearer, jwtOptions) =>
             {
@@ -62,7 +60,6 @@ public static class ApiServiceCollectionExtensions
             .AddPolicy(Roles.Administrator, p => p.RequireRole(Roles.Administrator))
             .AddPolicy(Roles.Trainer, p => p.RequireRole(Roles.Trainer))
             .AddPolicy(Roles.Student, p => p.RequireRole(Roles.Student))
-            // Content authors: admins and trainers may manage catalog content.
             .AddPolicy("ContentManager", p => p.RequireRole(Roles.Administrator, Roles.Trainer));
     }
 
@@ -79,12 +76,6 @@ public static class ApiServiceCollectionExtensions
             }));
     }
 
-    /// <summary>
-    /// Reads the allowed CORS origins from either the JSON array or a single comma-separated value.
-    /// A scalar value wins: an environment variable (<c>Cors__AllowedOrigins</c>) cannot replace the
-    /// per-index keys of the array in appsettings.json, so deployments would otherwise be stuck with
-    /// the localhost defaults.
-    /// </summary>
     private static string[] ReadAllowedOrigins(IConfiguration configuration)
     {
         var section = configuration.GetSection("Cors:AllowedOrigins");
@@ -94,7 +85,6 @@ public static class ApiServiceCollectionExtensions
             ? scalar.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
             : section.Get<string[]>() ?? Array.Empty<string>();
 
-        // WithOrigins compares literally, so a trailing slash would never match a browser's Origin header.
         return origins.Select(origin => origin.TrimEnd('/')).ToArray();
     }
 
@@ -104,7 +94,6 @@ public static class ApiServiceCollectionExtensions
         {
             options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 
-            // Global fixed-window limiter, partitioned by client IP.
             options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
                 RateLimitPartition.GetFixedWindowLimiter(
                     PartitionKey(context),
@@ -115,7 +104,6 @@ public static class ApiServiceCollectionExtensions
                         QueueLimit = 0
                     }));
 
-            // Tighter limiter for authentication endpoints to slow brute-force attempts.
             options.AddPolicy(AuthRateLimitPolicy, context =>
                 RateLimitPartition.GetFixedWindowLimiter(
                     PartitionKey(context),
@@ -128,8 +116,6 @@ public static class ApiServiceCollectionExtensions
         });
     }
 
-    // Partition by client IP. When the IP is unavailable (e.g. the in-memory test server),
-    // fall back to a per-request key so isolated requests aren't forced to share a partition.
     private static string PartitionKey(HttpContext context) =>
         context.Connection.RemoteIpAddress?.ToString() ?? Guid.NewGuid().ToString();
 

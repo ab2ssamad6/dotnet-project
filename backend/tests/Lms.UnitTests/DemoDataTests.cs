@@ -5,12 +5,6 @@ using Lms.Infrastructure.Persistence.Seed.DemoData;
 
 namespace Lms.Unittests;
 
-/// <summary>
-/// Structural checks over the demo course definitions. They need no database: the course
-/// factories are pure and return a fully built <see cref="Training"/> graph. The point is to
-/// catch a malformed answer key or an over-length string here rather than as a MySQL
-/// truncation error during container startup.
-/// </summary>
 public class DemoDataTests
 {
     public static TheoryData<string> CourseTitles()

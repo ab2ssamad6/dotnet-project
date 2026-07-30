@@ -11,7 +11,6 @@ public static class EnrollmentEndpoints
 {
     public static IEndpointRouteBuilder MapEnrollmentEndpoints(this IEndpointRouteBuilder app)
     {
-        // Public catalog of published trainings students can browse and enrol in.
         app.MapGet("/api/catalog", async (ITrainingService service, CancellationToken ct,
                 int page = 1, int pageSize = 20, string? search = null) =>
                 (await service.GetPagedAsync(PagedQuery.Of(page, pageSize, search), onlyPublished: true, ct)).ToHttpResult())
@@ -58,7 +57,6 @@ public static class EnrollmentEndpoints
         return app;
     }
 
-    /// <summary>Resolves the current student id or returns 401, then runs the operation and shapes the result.</summary>
     private static async Task<IResult> Requires<T>(
         ICurrentUser user,
         Func<Guid, Task<Result<T>>> operation,

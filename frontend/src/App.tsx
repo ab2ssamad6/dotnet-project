@@ -8,7 +8,6 @@ import { FullPageLoader } from '@/components/common/FullPageLoader';
 import { lazyPage } from '@/utils/lazyWithRetry';
 import { Role } from '@/types';
 
-// Auth pages are small and needed first — import eagerly.
 import { LoginPage } from '@/pages/auth/LoginPage';
 import { RegisterPage } from '@/pages/auth/RegisterPage';
 import { ForgotPasswordPage } from '@/pages/auth/ForgotPasswordPage';
@@ -16,9 +15,6 @@ import { ResetPasswordPage } from '@/pages/auth/ResetPasswordPage';
 import { VerifyEmailPage } from '@/pages/auth/VerifyEmailPage';
 import { ForbiddenPage, NotFoundPage } from '@/pages/ErrorPages';
 
-// App pages are code-split so each route loads on demand. lazyPage (not React's bare lazy) retries
-// the import and falls back to one reload, so a network blip or a redeploy mid-session cannot take
-// the whole app down through the error boundary.
 const DashboardPage = lazyPage(() => import('@/pages/dashboard/DashboardPage'), 'DashboardPage');
 const CategoriesPage = lazyPage(() => import('@/pages/categories/CategoriesPage'), 'CategoriesPage');
 const TrainingsPage = lazyPage(() => import('@/pages/trainings/TrainingsPage'), 'TrainingsPage');
@@ -37,7 +33,6 @@ const CONTENT = [Role.Administrator, Role.Trainer];
 export default function App() {
   return (
     <Routes>
-      {/* Public auth routes */}
       <Route element={<AuthLayout />}>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
@@ -46,7 +41,6 @@ export default function App() {
         <Route path="/verify-email" element={<VerifyEmailPage />} />
       </Route>
 
-      {/* Authenticated app */}
       <Route element={<ProtectedRoute />}>
         <Route
           element={
@@ -62,14 +56,12 @@ export default function App() {
           <Route path="/settings" element={<Lazy><SettingsPage /></Lazy>} />
           <Route path="/ai-trainer" element={<Lazy><AITrainerPage /></Lazy>} />
 
-          {/* Student portal */}
           <Route element={<RoleRoute roles={[Role.Student]} />}>
             <Route path="/catalog" element={<Lazy><CatalogPage /></Lazy>} />
             <Route path="/my-learning" element={<Lazy><MyLearningPage /></Lazy>} />
             <Route path="/my-learning/:trainingId" element={<Lazy><LearningPage /></Lazy>} />
           </Route>
 
-          {/* Content management (Admin + Trainer) */}
           <Route element={<RoleRoute roles={CONTENT} />}>
             <Route path="/categories" element={<Lazy><CategoriesPage /></Lazy>} />
             <Route path="/trainings" element={<Lazy><TrainingsPage /></Lazy>} />
@@ -77,14 +69,12 @@ export default function App() {
             <Route path="/trainers" element={<Lazy><TrainersPage /></Lazy>} />
           </Route>
 
-          {/* Admin only */}
           <Route element={<RoleRoute roles={[Role.Administrator]} />}>
             <Route path="/students" element={<Lazy><StudentsPage /></Lazy>} />
           </Route>
         </Route>
       </Route>
 
-      {/* Errors */}
       <Route path="/403" element={<ForbiddenPage />} />
       <Route path="/404" element={<NotFoundPage />} />
       <Route path="*" element={<NotFoundPage />} />
@@ -92,7 +82,6 @@ export default function App() {
   );
 }
 
-/** Suspense wrapper for lazily-loaded route pages. */
 function Lazy({ children }: { children: React.ReactNode }) {
   return <Suspense fallback={<FullPageLoader />}>{children}</Suspense>;
 }

@@ -36,7 +36,6 @@ function pagedParams(q: PagedQuery = {}) {
   };
 }
 
-// ---------- Categories ----------
 export const categoryService = {
   list: (q?: PagedQuery) => http.get<PagedResult<CategoryDto>>('/api/categories', { params: pagedParams(q) }),
   get: (id: string) => http.get<CategoryDto>(`/api/categories/${id}`),
@@ -45,7 +44,6 @@ export const categoryService = {
   remove: (id: string) => http.delete(`/api/categories/${id}`),
 };
 
-// ---------- Trainings ----------
 export const trainingService = {
   list: (q?: PagedQuery) => http.get<PagedResult<TrainingDto>>('/api/trainings', { params: pagedParams(q) }),
   catalog: (q?: PagedQuery) => http.get<PagedResult<TrainingDto>>('/api/catalog', { params: pagedParams(q) }),
@@ -55,7 +53,6 @@ export const trainingService = {
   remove: (id: string) => http.delete(`/api/trainings/${id}`),
 };
 
-// ---------- Modules ----------
 export const moduleService = {
   listByTraining: (trainingId: string) => http.get<ModuleDto[]>(`/api/trainings/${trainingId}/modules`),
   get: (id: string) => http.get<ModuleDto>(`/api/modules/${id}`),
@@ -64,7 +61,6 @@ export const moduleService = {
   remove: (id: string) => http.delete(`/api/modules/${id}`),
 };
 
-// ---------- Activities ----------
 export const activityService = {
   listByModule: (moduleId: string) => http.get<ActivityDto[]>(`/api/modules/${moduleId}/activities`),
   get: (id: string) => http.get<ActivityDto>(`/api/activities/${id}`),
@@ -79,7 +75,6 @@ export const activityService = {
   remove: (id: string) => http.delete(`/api/activities/${id}`),
 };
 
-// ---------- Trainers ----------
 export const trainerService = {
   list: (q?: PagedQuery) => http.get<PagedResult<TrainerDto>>('/api/trainers', { params: pagedParams(q) }),
   get: (id: string) => http.get<TrainerDto>(`/api/trainers/${id}`),
@@ -88,7 +83,6 @@ export const trainerService = {
   remove: (id: string) => http.delete(`/api/trainers/${id}`),
 };
 
-// ---------- Enrollments (Student) ----------
 export const enrollmentService = {
   enroll: (trainingId: string) => http.post<EnrollmentDto>('/api/enrollments', { trainingId }),
   myEnrollments: () => http.get<EnrollmentDto[]>('/api/enrollments'),
@@ -100,12 +94,10 @@ export const enrollmentService = {
   certificate: (trainingId: string) => http.get<CertificateDto>(`/api/enrollments/${trainingId}/certificate`),
 };
 
-// ---------- Dashboard ----------
 export const dashboardService = {
   get: () => http.get<DashboardDto>('/api/admin/dashboard'),
 };
 
-// ---------- AI Trainer ----------
 export const aiTrainerService = {
   startSession: (body: StartSessionRequest) => http.post<StartSessionResponse>('/api/ai-trainer/session', body),
   ask: (body: AskQuestionRequest) => http.post<AskQuestionResponse>('/api/ai-trainer/ask', body),

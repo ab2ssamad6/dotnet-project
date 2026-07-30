@@ -111,7 +111,6 @@ public class ActivityService : IActivityService
         return Result<ActivityDto>.Success(Map(assessment, includeCorrectAnswers: true));
     }
 
-    /// <summary>Loads matching activities and, for assessments, their questions and answers.</summary>
     private async Task<List<LearningActivity>> LoadWithQuestions(
         System.Linq.Expressions.Expression<Func<LearningActivity, bool>> predicate, CancellationToken ct)
     {
@@ -120,7 +119,6 @@ public class ActivityService : IActivityService
         var assessmentIds = activities.OfType<Assessment>().Select(a => a.Id).ToList();
         if (assessmentIds.Count > 0)
         {
-            // Relationship fixup attaches these to the tracked assessments above.
             await _context.Questions
                 .Where(q => assessmentIds.Contains(q.AssessmentId))
                 .Include(q => q.Answers)

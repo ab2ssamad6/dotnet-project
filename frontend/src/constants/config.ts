@@ -1,6 +1,3 @@
-/** Runtime configuration derived from Vite env vars. */
-
-// When empty, API calls go to same-origin "/api" (Nginx proxy in prod, Vite proxy in dev).
 export const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/$/, '');
 
 export const STORAGE_KEYS = {

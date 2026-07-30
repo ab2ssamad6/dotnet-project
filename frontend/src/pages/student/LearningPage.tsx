@@ -18,7 +18,6 @@ export function LearningPage() {
   const modules = useAsync(() => moduleService.listByTraining(trainingId), [trainingId]);
   const [activeModuleId, setActiveModuleId] = useState<string | null>(null);
 
-  // Default to the first incomplete module (or the first module).
   useEffect(() => {
     if (activeModuleId || !progress.data) return;
     const ordered = [...progress.data.modules].sort((a, b) => a.order - b.order);
@@ -59,7 +58,6 @@ export function LearningPage() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
-        {/* Module list */}
         <aside className="space-y-2">
           <h2 className="px-1 text-xs font-semibold uppercase tracking-wide text-slate-400">Modules</h2>
           {orderedModules.map((m) => (
@@ -91,7 +89,6 @@ export function LearningPage() {
           {isCompleted && <CertificateCard trainingId={trainingId} />}
         </aside>
 
-        {/* Active module content */}
         <div>
           {activeModuleId ? (
             <ModuleContent

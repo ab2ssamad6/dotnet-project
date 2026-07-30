@@ -23,7 +23,6 @@ export function SkeletonCard() {
   );
 }
 
-/** A full-table loading placeholder used by DataTable. */
 export function SkeletonTable({ rows = 5, cols = 4 }: { rows?: number; cols?: number }) {
   return (
     <div className="divide-y divide-slate-100">

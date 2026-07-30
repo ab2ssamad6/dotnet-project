@@ -1,6 +1,5 @@
 import { useCallback, useState } from 'react';
 
-/** Manages open/close state for modals/drawers, optionally carrying a payload. */
 export function useDisclosure<T = undefined>() {
   const [isOpen, setIsOpen] = useState(false);
   const [payload, setPayload] = useState<T | undefined>(undefined);

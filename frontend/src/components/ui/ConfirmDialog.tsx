@@ -15,11 +15,6 @@ type ConfirmFn = (options: ConfirmOptions) => Promise<boolean>;
 
 const ConfirmContext = createContext<ConfirmFn | null>(null);
 
-/**
- * Provides an imperative `confirm()` used by tables/actions:
- *   const confirm = useConfirm();
- *   if (await confirm({ title, message })) { ...destructive action... }
- */
 export function ConfirmProvider({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState<ConfirmOptions | null>(null);

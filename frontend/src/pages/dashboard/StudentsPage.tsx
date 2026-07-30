@@ -6,10 +6,6 @@ import { useAsync } from '@/hooks/useAsync';
 import { dashboardService } from '@/services';
 import { timeAgo } from '@/utils/format';
 
-/**
- * The API exposes no student-listing endpoint, so this admin view summarizes
- * student engagement from the dashboard aggregates (counts + recent enrollments).
- */
 export function StudentsPage() {
   const { data, loading, error, refetch } = useAsync(() => dashboardService.get(), []);
   const recentEnrollments = data?.recentActivity.filter((a) => a.type === 'Enrollment') ?? [];

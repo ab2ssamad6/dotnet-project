@@ -1,6 +1,5 @@
 namespace Lms.Infrastructure.Options;
 
-/// <summary>Credentials used when seeding the default accounts.</summary>
 public class SeedOptions
 {
     public const string SectionName = "Seed";

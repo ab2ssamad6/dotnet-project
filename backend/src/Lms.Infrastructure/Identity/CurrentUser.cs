@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Http;
 
 namespace Lms.Infrastructure.Identity;
 
-/// <summary>Reads the authenticated caller from the current HTTP request's claims.</summary>
 public class CurrentUser : ICurrentUser
 {
     private readonly IHttpContextAccessor _accessor;

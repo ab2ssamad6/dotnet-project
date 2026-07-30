@@ -31,18 +31,15 @@ public class CategoriesCrudTests : IClassFixture<LmsWebApplicationFactory>
         var client = await CreateAdminClientAsync();
         var name = $"Category {Guid.NewGuid():N}";
 
-        // Create -> 201
         var create = await client.PostAsJsonAsync("/api/categories",
             new CreateCategoryRequest(name, "Integration test category"));
         create.StatusCode.Should().Be(HttpStatusCode.Created);
         var created = await create.Content.ReadFromJsonAsync<CategoryDto>();
         created!.Name.Should().Be(name);
 
-        // Get by id -> 200
         var get = await client.GetAsync($"/api/categories/{created.Id}");
         get.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        // List -> contains the new category
         var list = await client.GetFromJsonAsync<PagedResult<CategoryDto>>("/api/categories?page=1&pageSize=100");
         list!.Items.Should().Contain(c => c.Id == created.Id);
     }

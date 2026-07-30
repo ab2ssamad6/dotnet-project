@@ -1,10 +1,3 @@
-/**
- * Domain types mirroring the LMS .NET API DTOs.
- * NOTE: The API serializes enums as **numbers** (no JsonStringEnumConverter),
- * so every enum below uses numeric values matching Lms.Domain/Enums/Enums.cs.
- */
-
-// ---------- Enums ----------
 export enum Role {
   Administrator = 'Administrator',
   Trainer = 'Trainer',
@@ -43,7 +36,6 @@ export enum EnrollmentStatus {
   Cancelled = 2,
 }
 
-// ---------- Common ----------
 export interface PagedResult<T> {
   items: T[];
   page: number;
@@ -60,7 +52,6 @@ export interface PagedQuery {
   search?: string;
 }
 
-/** RFC7807 Problem Details returned by the API on failure. */
 export interface ProblemDetails {
   type?: string;
   title?: string;
@@ -69,7 +60,6 @@ export interface ProblemDetails {
   errors?: Record<string, string[]>;
 }
 
-// ---------- Auth ----------
 export interface UserDto {
   id: string;
   email: string;
@@ -122,7 +112,6 @@ export interface ChangePasswordRequest {
   confirmPassword: string;
 }
 
-// ---------- Categories ----------
 export interface CategoryDto {
   id: string;
   name: string;
@@ -136,7 +125,6 @@ export interface CategoryRequest {
   description?: string | null;
 }
 
-// ---------- Trainings ----------
 export interface TrainingDto {
   id: string;
   title: string;
@@ -167,7 +155,6 @@ export interface TrainingRequest {
   trainerId: string;
 }
 
-// ---------- Modules ----------
 export interface ModuleDto {
   id: string;
   trainingId: string;
@@ -195,7 +182,6 @@ export interface CreateModuleRequest {
 
 export type UpdateModuleRequest = Omit<CreateModuleRequest, 'trainingId'>;
 
-// ---------- Activities ----------
 export interface AnswerDto {
   id: string;
   text: string;
@@ -259,7 +245,6 @@ export interface CreateAssessmentRequest {
   questions: CreateQuestionRequest[];
 }
 
-// ---------- Trainers ----------
 export interface TrainerDto {
   id: string;
   firstName: string;
@@ -283,7 +268,6 @@ export interface TrainerRequest {
   phone?: string | null;
 }
 
-// ---------- Enrollments ----------
 export interface EnrollmentDto {
   id: string;
   studentId: string;
@@ -341,7 +325,6 @@ export interface CertificateDto {
   message?: string | null;
 }
 
-// ---------- Dashboard ----------
 export interface DashboardCountsDto {
   students: number;
   trainers: number;
@@ -368,11 +351,9 @@ export interface DashboardDto {
   recentActivity: RecentActivityDto[];
 }
 
-// ---------- AI Trainer ----------
 export interface StartSessionRequest {
   moduleId?: string | null;
   personaName?: string | null;
-  /** Scopes the avatar to a training so it tutors that subject. Implied when moduleId is set. */
   trainingId?: string | null;
 }
 
@@ -382,7 +363,6 @@ export interface StartSessionResponse {
   moduleId?: string | null;
   issuedAt: string;
   trainingId?: string | null;
-  /** Title of the subject the persona was primed with, for labelling the session. */
   subjectTitle?: string | null;
   personaName?: string | null;
 }

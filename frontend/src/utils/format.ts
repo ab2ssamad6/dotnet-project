@@ -1,5 +1,3 @@
-/** Formatting helpers shared across the app. */
-
 export function formatDate(value?: string | null, opts?: Intl.DateTimeFormatOptions): string {
   if (!value) return '—';
   const date = new Date(value);
@@ -20,7 +18,6 @@ export function formatDateTime(value?: string | null): string {
   });
 }
 
-/** Relative time e.g. "3 hours ago". */
 export function timeAgo(value?: string | null): string {
   if (!value) return '';
   const date = new Date(value).getTime();
@@ -47,7 +44,6 @@ export function timeAgo(value?: string | null): string {
   return '';
 }
 
-/** Convert minutes to a readable duration like "1h 30m". */
 export function formatDuration(minutes?: number | null): string {
   if (!minutes || minutes <= 0) return '—';
   const h = Math.floor(minutes / 60);

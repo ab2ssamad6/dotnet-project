@@ -17,7 +17,6 @@ export function ResetPasswordPage() {
     formState: { errors, isSubmitting },
   } = useForm<ResetPasswordForm>({ resolver: zodResolver(resetPasswordSchema) });
 
-  // Pre-fill from a reset link (e.g. /reset-password?email=..&token=..).
   useEffect(() => {
     const email = params.get('email');
     const token = params.get('token');

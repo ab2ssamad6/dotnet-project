@@ -5,7 +5,6 @@ export interface NavItem {
   label: string;
   to: string;
   icon: IconName;
-  /** Roles allowed to see this item. Empty = all authenticated users. */
   roles?: string[];
 }
 
@@ -14,10 +13,6 @@ export interface NavSection {
   items: NavItem[];
 }
 
-/**
- * Role-aware navigation. The sidebar filters items by the current user's roles.
- * Students get a learning-focused menu; Admins/Trainers get management menus.
- */
 export const NAV_SECTIONS: NavSection[] = [
   {
     items: [

@@ -30,10 +30,6 @@ const seed: AppNotification[] = [
   },
 ];
 
-/**
- * Lightweight in-app notification center. The backend exposes no notifications
- * endpoint, so this collects client-side events (enrollments, quiz results, …).
- */
 export function NotificationsProvider({ children }: { children: ReactNode }) {
   const [notifications, setNotifications] = useState<AppNotification[]>(seed);
 

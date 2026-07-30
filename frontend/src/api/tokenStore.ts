@@ -1,10 +1,6 @@
 import { STORAGE_KEYS } from '@/constants/config';
 import type { UserDto } from '@/types';
 
-/**
- * Small localStorage-backed token store. Kept framework-agnostic so both the
- * axios interceptors and the AuthContext can read/write the same source of truth.
- */
 export const tokenStore = {
   getAccessToken(): string | null {
     return localStorage.getItem(STORAGE_KEYS.accessToken);

@@ -11,7 +11,6 @@ public class Question : AuditableEntity
 
     public int Points { get; set; } = 1;
 
-    /// <summary>Owning quiz or exam (any <see cref="Assessment"/>).</summary>
     public Guid AssessmentId { get; set; }
     public Assessment? Assessment { get; set; }
 

@@ -9,11 +9,6 @@ interface Options {
   initialSort?: SortState;
 }
 
-/**
- * Generic controller for a paginated, searchable, sortable list backed by a
- * server endpoint of shape `(query) => Promise<PagedResult<T>>`.
- * Sorting is applied client-side on the current page (the API has no sort param).
- */
 export function usePagedList<T>(fetcher: (q: PagedQuery) => Promise<PagedResult<T>>, options: Options = {}) {
   const [page, setPage] = useState(1);
   const [pageSize] = useState(options.pageSize ?? DEFAULT_PAGE_SIZE);
@@ -76,7 +71,6 @@ export function usePagedList<T>(fetcher: (q: PagedQuery) => Promise<PagedResult<
   };
 }
 
-/** Sort an array of records by a dotless key, coercing values sensibly. */
 function sortRows<T>(rows: T[], sort: SortState): T[] {
   const dir = sort.direction === 'asc' ? 1 : -1;
   return [...rows].sort((a, b) => {

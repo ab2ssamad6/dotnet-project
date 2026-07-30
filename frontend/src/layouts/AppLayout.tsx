@@ -4,7 +4,6 @@ import { motion } from 'framer-motion';
 import { Sidebar } from './Sidebar';
 import { Topbar } from './Topbar';
 
-/** The authenticated app shell: sidebar + topbar + animated routed content. */
 export function AppLayout() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();

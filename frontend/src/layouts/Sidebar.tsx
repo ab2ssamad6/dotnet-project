@@ -54,7 +54,6 @@ export function Sidebar({ mobileOpen, onCloseMobile }: SidebarProps) {
 
   return (
     <>
-      {/* Desktop sidebar */}
       <aside className="hidden w-64 shrink-0 flex-col border-r border-slate-200 bg-white lg:flex">
         <div className="flex h-16 items-center border-b border-slate-100 px-5">
           <Logo />
@@ -62,7 +61,6 @@ export function Sidebar({ mobileOpen, onCloseMobile }: SidebarProps) {
         {nav}
       </aside>
 
-      {/* Mobile drawer */}
       {mobileOpen && (
         <div className="fixed inset-0 z-40 lg:hidden">
           <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onClick={onCloseMobile} />

@@ -13,10 +13,8 @@ public class LearningActivityConfiguration : IEntityTypeConfiguration<LearningAc
         builder.HasKey(a => a.Id);
         builder.Property(a => a.Title).HasMaxLength(200).IsRequired();
 
-        // Computed, not persisted (its value is derived from the concrete type).
         builder.Ignore(a => a.ActivityType);
 
-        // Table-per-hierarchy: one table for Lesson/Exercise/Quiz/Exam, distinguished by ActivityKind.
         builder.HasDiscriminator<ActivityType>("ActivityKind")
             .HasValue<Lesson>(ActivityType.Lesson)
             .HasValue<Exercise>(ActivityType.Exercise)

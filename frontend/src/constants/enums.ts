@@ -9,7 +9,6 @@ import {
 export interface EnumOption<T> {
   value: T;
   label: string;
-  /** Tailwind classes for a badge (bg + text). */
   badge: string;
 }
 

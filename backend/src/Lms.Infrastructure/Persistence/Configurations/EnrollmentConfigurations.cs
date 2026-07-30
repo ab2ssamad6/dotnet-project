@@ -12,7 +12,6 @@ public class EnrollmentConfiguration : IEntityTypeConfiguration<Enrollment>
         builder.HasKey(e => e.Id);
         builder.Property(e => e.Status).HasConversion<string>().HasMaxLength(20);
 
-        // A student can enrol in a given training only once.
         builder.HasIndex(e => new { e.StudentId, e.TrainingId }).IsUnique();
 
         builder.HasMany(e => e.ModuleCompletions)
@@ -35,7 +34,6 @@ public class ModuleCompletionConfiguration : IEntityTypeConfiguration<ModuleComp
         builder.HasKey(m => m.Id);
         builder.HasIndex(m => new { m.EnrollmentId, m.ModuleId }).IsUnique();
 
-        // No FK navigation from Module side; reference by id only to avoid a cascade cycle.
         builder.HasOne(m => m.Module)
             .WithMany()
             .HasForeignKey(m => m.ModuleId)

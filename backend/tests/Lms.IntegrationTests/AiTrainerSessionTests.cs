@@ -11,11 +11,6 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Lms.IntegrationTests;
 
-/// <summary>
-/// Covers scoping an AI trainer session to a subject. The Testing environment has no Anam API key,
-/// so a successfully resolved subject surfaces as 400 "provider is not configured" while an
-/// unresolvable one surfaces as 404 — which is enough to assert the lookup itself.
-/// </summary>
 public class AiTrainerSessionTests : IClassFixture<LmsWebApplicationFactory>
 {
     private readonly LmsWebApplicationFactory _factory;
@@ -33,7 +28,6 @@ public class AiTrainerSessionTests : IClassFixture<LmsWebApplicationFactory>
         return client;
     }
 
-    /// <summary>Inserts a training with one module and one lesson, returning both ids.</summary>
     private async Task<(Guid TrainingId, Guid ModuleId)> SeedTrainingAsync(string title)
     {
         using var scope = _factory.Services.CreateScope();
@@ -99,7 +93,6 @@ public class AiTrainerSessionTests : IClassFixture<LmsWebApplicationFactory>
         var response = await client.PostAsJsonAsync("/api/ai-trainer/session",
             new StartSessionRequest(null, null, trainingId));
 
-        // Subject resolved, then stopped at the missing provider key — not a 404.
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         (await response.Content.ReadAsStringAsync()).Should().Contain("not configured");
     }

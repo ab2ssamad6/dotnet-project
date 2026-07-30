@@ -16,22 +16,12 @@ interface TranscriptLine {
 
 interface Props {
   moduleId?: string | null;
-  /** Scopes the avatar to a training so it introduces itself as tutor of that subject. */
   trainingId?: string | null;
-  /** Subject name shown in the header before the session confirms it. */
   subjectLabel?: string | null;
   personaName?: string | null;
   compact?: boolean;
 }
 
-/**
- * Reusable AI Trainer panel. Fetches a streaming session token from the API,
- * connects the Anam.ai avatar to a <video> element, and offers Start/Stop,
- * ask-a-question, mic and speaker controls with full status + error handling.
- *
- * The persona's subject knowledge is baked into the session token server-side (the SDK's
- * createClient takes no persona config), so scoping happens via trainingId/moduleId on start.
- */
 export function AITrainerPanel({ moduleId, trainingId, subjectLabel, personaName, compact }: Props) {
   const videoId = useId().replace(/:/g, '');
   const clientRef = useRef<AnamClient | null>(null);
@@ -45,7 +35,6 @@ export function AITrainerPanel({ moduleId, trainingId, subjectLabel, personaName
   const [asking, setAsking] = useState(false);
   const [transcript, setTranscript] = useState<TranscriptLine[]>([]);
   const [collapsed, setCollapsed] = useState(compact ?? false);
-  // Confirmed by the API on start; falls back to the caller's label beforehand.
   const [primedSubject, setPrimedSubject] = useState<string | null>(null);
   const subject = primedSubject ?? subjectLabel ?? null;
 
@@ -54,7 +43,6 @@ export function AITrainerPanel({ moduleId, trainingId, subjectLabel, personaName
     try {
       clientRef.current?.stopStreaming?.();
     } catch {
-      /* ignore */
     }
     clientRef.current = null;
     const video = document.getElementById(videoId) as HTMLVideoElement | null;
@@ -66,7 +54,6 @@ export function AITrainerPanel({ moduleId, trainingId, subjectLabel, personaName
     setStatus('idle');
   }, [videoId]);
 
-  // Ensure the session is torn down on unmount.
   useEffect(() => {
     return () => {
       void stop();
@@ -94,7 +81,6 @@ export function AITrainerPanel({ moduleId, trainingId, subjectLabel, personaName
 
       client.addListener(events.SESSION_READY, () => setStatus('live'));
       client.addListener(events.CONNECTION_CLOSED, () => setStatus('idle'));
-      // Capture streamed conversation messages when the SDK provides them.
       const onHistory = (payload: unknown) => {
         if (Array.isArray(payload)) {
           setTranscript(
@@ -111,7 +97,6 @@ export function AITrainerPanel({ moduleId, trainingId, subjectLabel, personaName
       client.addListener(events.MESSAGE_HISTORY_UPDATED, onHistory);
 
       await client.streamToVideoElement(videoId);
-      // Some SDK versions never emit SESSION_READY before streaming resolves.
       setStatus((s) => (s === 'connecting' ? 'live' : s));
     } catch (err) {
       const message = toApiError(err).message;
@@ -132,13 +117,9 @@ export function AITrainerPanel({ moduleId, trainingId, subjectLabel, personaName
     setTranscript((t) => [...t, { id: crypto.randomUUID(), role: 'user', text }]);
     setQuestion('');
     try {
-      // Drive the avatar to speak client-side when supported…
       if (clientRef.current?.talk) {
         await clientRef.current.talk(text);
       }
-      // …and fetch a textual answer from the backend for the transcript. Only show it when the
-      // backend actually answered: otherwise it is a non-live placeholder, and the real reply
-      // arrives by voice through the avatar (and via MESSAGE_HISTORY_UPDATED).
       const res = await aiTrainerService.ask({
         sessionToken: sessionTokenRef.current ?? '',
         question: text,
@@ -163,7 +144,6 @@ export function AITrainerPanel({ moduleId, trainingId, subjectLabel, personaName
         if (next) client?.unmuteInputAudio?.();
         else client?.muteInputAudio?.();
       } catch {
-        /* ignore */
       }
       return next;
     });
@@ -207,7 +187,6 @@ export function AITrainerPanel({ moduleId, trainingId, subjectLabel, personaName
 
       {!collapsed && (
         <CardBody className="space-y-4">
-          {/* Avatar video */}
           <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-slate-900">
             {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
             <video id={videoId} autoPlay playsInline className="h-full w-full object-cover" />
@@ -246,7 +225,6 @@ export function AITrainerPanel({ moduleId, trainingId, subjectLabel, personaName
             )}
           </div>
 
-          {/* Controls */}
           <div className="flex items-center gap-2">
             {isLive ? (
               <Button variant="danger" leftIcon={<Icons.stop size={16} />} onClick={stop}>
@@ -282,7 +260,6 @@ export function AITrainerPanel({ moduleId, trainingId, subjectLabel, personaName
             </Button>
           </div>
 
-          {/* Transcript */}
           {transcript.length > 0 && (
             <div className="max-h-56 space-y-2 overflow-y-auto rounded-lg border border-slate-100 bg-slate-50 p-3">
               {transcript.map((line) => (
@@ -300,7 +277,6 @@ export function AITrainerPanel({ moduleId, trainingId, subjectLabel, personaName
             </div>
           )}
 
-          {/* Ask a question */}
           <form
             className="flex items-center gap-2"
             onSubmit={(e) => {

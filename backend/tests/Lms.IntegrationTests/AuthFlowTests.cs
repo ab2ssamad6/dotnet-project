@@ -18,29 +18,24 @@ public class AuthFlowTests : IClassFixture<LmsWebApplicationFactory>
         var client = _factory.CreateClient();
         var email = $"student_{Guid.NewGuid():N}@lms.local";
 
-        // Register
         var register = await client.PostAsJsonAsync("/api/auth/register",
             new RegisterRequest("Sam", "Student", email, "Str0ng#Pass1", "Str0ng#Pass1", "Student"));
         register.StatusCode.Should().Be(HttpStatusCode.OK);
         var registered = await register.Content.ReadFromJsonAsync<AuthResponse>();
         registered!.User.Roles.Should().Contain("Student");
 
-        // Login
         var login = await client.PostAsJsonAsync("/api/auth/login", new LoginRequest(email, "Str0ng#Pass1"));
         login.StatusCode.Should().Be(HttpStatusCode.OK);
         var auth = await login.Content.ReadFromJsonAsync<AuthResponse>();
         auth!.AccessToken.Should().NotBeNullOrEmpty();
 
-        // Protected endpoint without token -> 401
         var unauthorized = await client.GetAsync("/api/categories");
         unauthorized.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
 
-        // Protected endpoint with token -> 200
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", auth.AccessToken);
         var authorized = await client.GetAsync("/api/categories");
         authorized.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        // Refresh rotates the token
         var refresh = await client.PostAsJsonAsync("/api/auth/refresh", new RefreshTokenRequest(auth.RefreshToken));
         refresh.StatusCode.Should().Be(HttpStatusCode.OK);
         var refreshed = await refresh.Content.ReadFromJsonAsync<AuthResponse>();

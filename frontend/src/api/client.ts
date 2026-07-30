@@ -10,22 +10,16 @@ import type { AuthResponse } from '@/types';
 import { tokenStore } from './tokenStore';
 import { toApiError } from './errors';
 
-/** Config flag used to mark a request that has already been retried after a refresh. */
 interface RetryConfig extends InternalAxiosRequestConfig {
   _retried?: boolean;
   _retryCount?: number;
 }
 
-/**
- * Callback the AuthContext registers so the interceptor can force a global logout
- * when the refresh token is no longer valid.
- */
 let onForcedLogout: (() => void) | null = null;
 export function registerForcedLogoutHandler(handler: () => void): void {
   onForcedLogout = handler;
 }
 
-// Bare client (no interceptors) used exclusively for the refresh call to avoid recursion.
 const bareClient = axios.create({ baseURL: API_BASE_URL });
 
 export const apiClient: AxiosInstance = axios.create({
@@ -34,7 +28,6 @@ export const apiClient: AxiosInstance = axios.create({
   timeout: 30_000,
 });
 
-// ---------- Request interceptor: inject JWT ----------
 apiClient.interceptors.request.use((config) => {
   const token = tokenStore.getAccessToken();
   if (token) {
@@ -45,7 +38,6 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
-// ---------- Refresh-token single-flight ----------
 let refreshPromise: Promise<string> | null = null;
 
 async function refreshAccessToken(): Promise<string> {
@@ -57,14 +49,12 @@ async function refreshAccessToken(): Promise<string> {
   return data.accessToken;
 }
 
-// ---------- Response interceptor: refresh on 401 + light retry on 5xx/network ----------
 apiClient.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
     const config = error.config as RetryConfig | undefined;
     const status = error.response?.status;
 
-    // 1) Attempt a one-time token refresh on 401 (but never for the auth endpoints themselves).
     const isAuthCall = config?.url?.includes('/api/auth/');
     if (status === 401 && config && !config._retried && !isAuthCall && tokenStore.getRefreshToken()) {
       config._retried = true;
@@ -84,7 +74,6 @@ apiClient.interceptors.response.use(
       }
     }
 
-    // 2) Lightweight retry for transient failures on idempotent GET requests.
     const isGet = (config?.method ?? 'get').toLowerCase() === 'get';
     const transient = status === undefined || status >= 500;
     if (config && isGet && transient) {
@@ -100,7 +89,6 @@ apiClient.interceptors.response.use(
   },
 );
 
-/** Thin typed helpers over the axios instance. */
 export const http = {
   get: <T>(url: string, config?: AxiosRequestConfig) => apiClient.get<T>(url, config).then((r) => r.data),
   post: <T>(url: string, body?: unknown, config?: AxiosRequestConfig) =>

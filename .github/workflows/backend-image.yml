@@ -1,8 +1,5 @@
 name: Publish backend image
 
-# Builds backend/Dockerfile and pushes it to the GitHub Container Registry, ready for Railway to pull.
-# See backend/README.md → "Deploy to Railway".
-
 on:
   push:
     branches: [master]
@@ -13,7 +10,6 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  # GHCR requires an all-lowercase name; repository owners are already lowercase.
   IMAGE_NAME: ${{ github.repository_owner }}/lms-api
 
 jobs:
@@ -35,7 +31,6 @@ jobs:
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
-          # Provided automatically by Actions; no secret to configure.
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Derive image tags
@@ -52,7 +47,6 @@ jobs:
         with:
           context: backend
           file: backend/Dockerfile
-          # Railway runs x86-64; building only amd64 keeps the job fast.
           platforms: linux/amd64
           push: true
           tags: ${{ steps.meta.outputs.tags }}

@@ -8,16 +8,6 @@ using Microsoft.Extensions.Logging;
 
 namespace Lms.Infrastructure.Persistence.Seed.DemoData;
 
-/// <summary>
-/// Populates the database with the demo catalogue described by <see cref="DemoCatalog"/>:
-/// categories, trainers, extra accounts, four fully written courses and a spread of
-/// enrollments with progress.
-/// </summary>
-/// <remarks>
-/// Every step is idempotent and independently gated, so the seeder converges on a partially
-/// populated database instead of failing or duplicating. Categories are matched by name and
-/// trainers by e-mail because both carry unique indexes.
-/// </remarks>
 public static class DemoDataSeeder
 {
     public static async Task SeedAsync(
@@ -146,11 +136,6 @@ public static class DemoDataSeeder
         return trainer;
     }
 
-    /// <summary>
-    /// Inserts a course unless one with the same title already exists. A pre-existing course with
-    /// fewer modules than the demo version is the thin sample data seeded by earlier builds; it is
-    /// replaced so that existing development databases pick up the richer content.
-    /// </summary>
     private static async Task EnsureCourseAsync(
         LmsDbContext context,
         string title,
@@ -183,8 +168,6 @@ public static class DemoDataSeeder
             await context.SaveChangesAsync(ct);
         }
 
-        // A brand-new, untracked graph: EF marks every reachable entity as Added, so the whole
-        // tree inserts in one go.
         context.Trainings.Add(demo);
         await context.SaveChangesAsync(ct);
 
@@ -248,12 +231,6 @@ public static class DemoDataSeeder
         }
     }
 
-    /// <summary>
-    /// Builds one enrollment plus its completions and quiz attempts. Child rows are added through
-    /// their own <see cref="DbSet{TEntity}"/> with scalar foreign keys rather than through the
-    /// navigation of an already-tracked parent, which would make EF emit an UPDATE instead of an
-    /// INSERT because <c>AuditableEntity</c> pre-sets the key.
-    /// </summary>
     private static void AddEnrollment(
         LmsDbContext context,
         Training training,
@@ -271,8 +248,6 @@ public static class DemoDataSeeder
             StudentId = studentId,
             TrainingId = training.Id,
             EnrolledAt = enrolledAt,
-            // Mirrors EnrollmentService.MarkModuleCompleteAsync so the value does not jump the
-            // first time the student completes a module through the API.
             ProgressPercent = modules.Count == 0
                 ? 0
                 : (int)Math.Round(completedCount * 100.0 / modules.Count),
@@ -282,8 +257,6 @@ public static class DemoDataSeeder
 
         context.Enrollments.Add(enrollment);
 
-        // Deterministic per-student variation, so scores differ between students but stay stable
-        // across re-seeds. Some land below the pass mark, giving the UI a failed attempt.
         var seed = plan.StudentEmail.Sum(c => (int)c);
 
         for (var i = 0; i < completedCount; i++)

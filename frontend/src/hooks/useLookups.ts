@@ -3,7 +3,6 @@ import { categoryService, trainerService } from '@/services';
 import { fullName } from '@/utils/format';
 import type { SelectOption } from '@/components/ui';
 
-/** Fetches categories + trainers as select options for forms (single request each). */
 export function useLookups() {
   const { data, loading, error } = useAsync(async () => {
     const [categories, trainers] = await Promise.all([

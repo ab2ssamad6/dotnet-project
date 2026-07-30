@@ -1,10 +1,6 @@
 import type { FieldValues, Resolver } from 'react-hook-form';
 import type { ZodType } from 'zod';
 
-/**
- * Minimal react-hook-form resolver for Zod schemas — avoids pulling in the
- * separate @hookform/resolvers package for our simple validation needs.
- */
 export function zodResolver<T extends FieldValues>(schema: ZodType<T>): Resolver<T> {
   return async (values) => {
     const result = schema.safeParse(values);

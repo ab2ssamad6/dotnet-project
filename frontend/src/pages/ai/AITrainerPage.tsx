@@ -9,8 +9,6 @@ import { moduleService, trainingService } from '@/services';
 
 export function AITrainerPage() {
   const { isStudent } = useAuth();
-  // Kept in the URL so /ai-trainer?trainingId=…&moduleId=… can be linked to from a
-  // training or lesson page, and so a refresh keeps the same subject.
   const [params, setParams] = useSearchParams();
   const trainingId = params.get('trainingId') ?? '';
   const moduleId = params.get('moduleId') ?? '';
@@ -27,7 +25,6 @@ export function AITrainerPage() {
     [params, setParams],
   );
 
-  // Students only get published trainings; staff can also pick up drafts they are working on.
   const trainings = useAsync(
     () =>
       isStudent

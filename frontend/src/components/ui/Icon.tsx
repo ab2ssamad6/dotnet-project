@@ -16,7 +16,6 @@ function base({ size = 20, ...props }: IconProps) {
   };
 }
 
-/* A curated set of Feather-style stroke icons used across the app. */
 export const Icons = {
   dashboard: (p: IconProps) => (
     <svg {...base(p)}>

@@ -2,23 +2,10 @@ using System.Text;
 
 namespace Lms.Infrastructure.Services.Anam;
 
-/// <summary>
-/// Builds the persona system prompt sent to Anam.ai when opening a session. The Anam browser SDK
-/// takes only a session token (<c>createClient(sessionToken)</c>) and no persona config, so the
-/// subject the avatar tutors has to be baked into the prompt server-side at token-exchange time.
-/// <para>Pure and side-effect free so it can be unit tested without HTTP or a database.</para>
-/// </summary>
 public static class AiTrainerPromptBuilder
 {
-    /// <summary>Longest description text embedded in the prompt before truncation.</summary>
     private const int MaxDescriptionLength = 400;
 
-    /// <summary>
-    /// Composes the system prompt. <paramref name="basePrompt"/> (the configured
-    /// <c>AiTrainer:Anam:SystemPrompt</c>) is kept as the tone preamble; the subject briefing is
-    /// appended to it. With no <paramref name="subject"/> the base prompt is returned unchanged,
-    /// preserving the behaviour of unscoped sessions and the anonymous /api/session-token alias.
-    /// </summary>
     public static string Build(string basePrompt, string personaName, AiSubjectContext? subject)
     {
         if (subject is null)

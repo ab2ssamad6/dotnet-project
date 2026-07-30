@@ -40,7 +40,6 @@ public class CreateQuestionRequestValidator : AbstractValidator<CreateQuestionRe
         RuleFor(x => x.Answers)
             .Must(a => a.Any(ans => ans.IsCorrect))
             .WithMessage("At least one answer must be marked correct.");
-        // True/False questions must have exactly two options with a single correct answer.
         RuleFor(x => x)
             .Must(q => q.Type != QuestionType.TrueFalse || q.Answers.Count == 2)
             .WithMessage("True/False questions must have exactly two answers.");

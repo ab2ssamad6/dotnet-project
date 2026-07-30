@@ -7,10 +7,6 @@ interface AsyncState<T> {
   error: ApiError | null;
 }
 
-/**
- * Runs an async function on mount (and whenever `deps` change), exposing
- * data/loading/error plus a `refetch`. Guards against setState after unmount.
- */
 export function useAsync<T>(fn: () => Promise<T>, deps: unknown[] = []) {
   const [state, setState] = useState<AsyncState<T>>({ data: null, loading: true, error: null });
   const mounted = useRef(true);

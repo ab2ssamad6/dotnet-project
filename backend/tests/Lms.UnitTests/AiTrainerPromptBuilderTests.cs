@@ -32,7 +32,6 @@ public class AiTrainerPromptBuilderTests
     [Fact]
     public void Unscoped_session_keeps_the_configured_prompt_untouched()
     {
-        // Preserves the behaviour of the anonymous /api/session-token alias.
         AiTrainerPromptBuilder.Build(BasePrompt, "Cara", subject: null).Should().Be(BasePrompt);
     }
 
@@ -42,9 +41,7 @@ public class AiTrainerPromptBuilderTests
         var prompt = AiTrainerPromptBuilder.Build(BasePrompt, "Cara", MachineLearningFoundations());
 
         prompt.Should().Contain("You are Cara, an expert tutor for the training \"Machine Learning Foundations\".");
-        // The configured prompt is kept as the tone preamble.
         prompt.Should().Contain(BasePrompt);
-        // It is told to introduce itself by subject on the first turn.
         prompt.Should().Contain("introduce yourself by name");
         prompt.Should().Contain("Machine Learning Foundations");
     }

@@ -40,7 +40,6 @@ export function Topbar({ onOpenSidebar }: { onOpenSidebar: () => void }) {
 
       <div className="flex-1" />
 
-      {/* Notifications */}
       <div ref={notifRef} className="relative">
         <button
           onClick={() => {
@@ -119,7 +118,6 @@ export function Topbar({ onOpenSidebar }: { onOpenSidebar: () => void }) {
         </AnimatePresence>
       </div>
 
-      {/* Profile menu */}
       <div ref={profileRef} className="relative">
         <button
           onClick={() => {

@@ -12,7 +12,6 @@ interface Props {
   onCompleted?: (result: QuizResultDto) => void;
 }
 
-/** Interactive quiz/exam runner with optional timer, scoring and result display. */
 export function QuizRunner({ trainingId, activity, onCompleted }: Props) {
   const questions = activity.questions ?? [];
   const [answers, setAnswers] = useState<Record<string, string[]>>({});
@@ -34,7 +33,6 @@ export function QuizRunner({ trainingId, activity, onCompleted }: Props) {
           [questionId]: current.includes(answerId) ? current.filter((x) => x !== answerId) : [...current, answerId],
         };
       }
-      // single-select (MultipleChoice / TrueFalse)
       return { ...prev, [questionId]: [answerId] };
     });
   };
@@ -67,7 +65,6 @@ export function QuizRunner({ trainingId, activity, onCompleted }: Props) {
     [activity.id, activity.title, answers, onCompleted, push, questions, trainingId],
   );
 
-  // Countdown timer (auto-submits at zero).
   useEffect(() => {
     if (!totalSeconds || result) return;
     if (remaining <= 0) {

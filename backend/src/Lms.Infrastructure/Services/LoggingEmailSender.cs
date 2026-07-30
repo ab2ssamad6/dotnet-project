@@ -3,10 +3,6 @@ using Microsoft.Extensions.Logging;
 
 namespace Lms.Infrastructure.Services;
 
-/// <summary>
-/// Development email sender that logs messages instead of sending them. Swap for a real
-/// SMTP/provider implementation in production (registration point in DependencyInjection).
-/// </summary>
 public class LoggingEmailSender : IEmailSender
 {
     private readonly ILogger<LoggingEmailSender> _logger;

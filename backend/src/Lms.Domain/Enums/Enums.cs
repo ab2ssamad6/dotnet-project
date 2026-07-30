@@ -15,7 +15,6 @@ public enum TrainingStatus
     Archived = 2
 }
 
-/// <summary>Kind of learning activity, used as the EF Core TPH discriminator.</summary>
 public enum ActivityType
 {
     Lesson = 0,

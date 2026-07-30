@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Lms.Api.Middleware;
 
-/// <summary>Converts unhandled exceptions into RFC 7807 ProblemDetails responses and logs them.</summary>
 public class GlobalExceptionMiddleware
 {
     private readonly RequestDelegate _next;

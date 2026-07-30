@@ -11,7 +11,6 @@ public class Training : AuditableEntity
 
     public DifficultyLevel Difficulty { get; set; } = DifficultyLevel.Beginner;
 
-    /// <summary>Estimated duration in minutes.</summary>
     public int Duration { get; set; }
 
     public string? Thumbnail { get; set; }

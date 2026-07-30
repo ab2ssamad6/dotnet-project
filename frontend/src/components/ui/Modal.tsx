@@ -12,7 +12,6 @@ interface ModalProps {
   children?: ReactNode;
   footer?: ReactNode;
   size?: 'sm' | 'md' | 'lg' | 'xl';
-  /** When false, clicking the backdrop won't close (useful during submit). */
   closeOnBackdrop?: boolean;
 }
 

@@ -3,10 +3,6 @@ using Lms.Domain.Common;
 
 namespace Lms.Application.Abstractions;
 
-/// <summary>
-/// Thin generic repository over an aggregate root. Used by simple CRUD services;
-/// services needing complex, join-heavy queries use the DbContext directly instead.
-/// </summary>
 public interface IRepository<T> where T : AuditableEntity
 {
     Task<T?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);

@@ -10,10 +10,6 @@ using Microsoft.Extensions.Hosting;
 
 namespace Lms.IntegrationTests;
 
-/// <summary>
-/// Boots the API in the "Testing" environment against an in-memory SQLite database
-/// (schema created via EnsureCreated, seeded with roles + default accounts).
-/// </summary>
 public class LmsWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
     private readonly SqliteConnection _connection = new("DataSource=:memory:");
@@ -40,7 +36,6 @@ public class LmsWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLi
         {
             _connection.Open();
 
-            // Replace the MySQL DbContext registration with in-memory SQLite.
             var descriptors = services
                 .Where(d => d.ServiceType == typeof(DbContextOptions<LmsDbContext>)
                             || d.ServiceType == typeof(DbContextOptions)

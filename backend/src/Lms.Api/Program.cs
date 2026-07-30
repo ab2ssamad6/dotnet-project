@@ -28,15 +28,11 @@ try
 
     var app = builder.Build();
 
-    // Apply migrations and seed (skipped under the integration-test host, which seeds itself).
     if (!app.Environment.IsEnvironment("Testing"))
     {
         await app.InitializeDatabaseAsync();
     }
 
-    // Hosted behind a platform load balancer (Railway, Fly.io, ...) the real client address and
-    // scheme only exist in the X-Forwarded-* headers; without this the per-IP rate limiter would
-    // partition every visitor into the proxy's single address.
     if (app.Configuration.GetValue("Security:UseForwardedHeaders", false))
     {
         var forwardedHeaders = new ForwardedHeadersOptions
@@ -45,7 +41,6 @@ try
                 | ForwardedHeaders.XForwardedProto
                 | ForwardedHeaders.XForwardedHost
         };
-        // The platform's proxy address is dynamic, so no fixed allow-list can be configured.
         forwardedHeaders.KnownNetworks.Clear();
         forwardedHeaders.KnownProxies.Clear();
         app.UseForwardedHeaders(forwardedHeaders);
@@ -73,7 +68,6 @@ try
 
     app.Run();
 }
-// Ignore the HostAbortedException raised by EF Core design-time tooling (e.g. 'dotnet ef migrations').
 catch (Exception ex) when (ex is not HostAbortedException)
 {
     Log.Fatal(ex, "The LMS API terminated unexpectedly.");
@@ -83,7 +77,6 @@ finally
     Log.CloseAndFlush();
 }
 
-/// <summary>Exposed so the integration-test WebApplicationFactory can reference the entry point.</summary>
 public partial class Program;
 
 internal static class DatabaseInitializationExtensions

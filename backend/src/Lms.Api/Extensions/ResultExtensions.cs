@@ -2,7 +2,6 @@ using Lms.Application.Common;
 
 namespace Lms.Api.Extensions;
 
-/// <summary>Maps application <see cref="Result"/> outcomes onto HTTP responses.</summary>
 public static class ResultExtensions
 {
     public static IResult ToHttpResult(this Result result) =>
@@ -11,7 +10,6 @@ public static class ResultExtensions
     public static IResult ToHttpResult<T>(this Result<T> result) =>
         result.IsSuccess ? Results.Ok(result.Value) : Problem(result);
 
-    /// <summary>Returns 201 Created on success, with a Location built from the created value.</summary>
     public static IResult ToCreatedResult<T>(this Result<T> result, Func<T, string> location) =>
         result.IsSuccess ? Results.Created(location(result.Value), result.Value) : Problem(result);
 

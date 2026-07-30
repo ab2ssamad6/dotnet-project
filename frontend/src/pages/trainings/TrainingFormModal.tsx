@@ -83,7 +83,6 @@ export function TrainingFormModal({ open, onClose, training, onSaved }: Props) {
     }
   }, [open, training, reset]);
 
-  // Keep published flag and status in sync for a coherent UX.
   const status = watch('status');
   useEffect(() => {
     if (Number(status) === TrainingStatus.Published) setValue('published', true);

@@ -1,6 +1,5 @@
 namespace Lms.Infrastructure.Options;
 
-/// <summary>Configuration for the Anam.ai AI-trainer provider.</summary>
 public class AnamOptions
 {
     public const string SectionName = "AiTrainer:Anam";
@@ -8,7 +7,6 @@ public class AnamOptions
     public string BaseUrl { get; set; } = "https://api.anam.ai";
     public string ApiKey { get; set; } = string.Empty;
 
-    // Default persona used when opening a session.
     public string PersonaName { get; set; } = "Cara";
     public string AvatarId { get; set; } = string.Empty;
     public string AvatarModel { get; set; } = "cara-4";

@@ -2,11 +2,9 @@ import { Outlet } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Logo } from '@/components/common/Logo';
 
-/** Split-screen shell for unauthenticated auth pages. */
 export function AuthLayout() {
   return (
     <div className="flex min-h-screen">
-      {/* Brand panel */}
       <div className="relative hidden w-1/2 flex-col justify-between overflow-hidden bg-brand-700 p-12 text-white lg:flex">
         <div className="absolute inset-0 opacity-20">
           <div className="absolute -left-20 -top-20 h-96 w-96 rounded-full bg-brand-400 blur-3xl" />
@@ -37,7 +35,6 @@ export function AuthLayout() {
         <p className="relative text-sm text-brand-200">© {new Date().getFullYear()} LMS Platform</p>
       </div>
 
-      {/* Form panel */}
       <div className="flex w-full flex-col items-center justify-center bg-slate-50 px-4 py-10 lg:w-1/2">
         <div className="mb-8 lg:hidden">
           <Logo />

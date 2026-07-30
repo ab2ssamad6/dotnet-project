@@ -8,7 +8,6 @@ interface State {
   error: Error | null;
 }
 
-/** App-level error boundary so a render crash shows a recoverable screen, not a blank page. */
 export class ErrorBoundary extends Component<Props, State> {
   state: State = { error: null };
 
@@ -17,14 +16,11 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
-    // In production this is where you'd forward to an error-tracking service.
     console.error('Unhandled UI error:', error, info);
   }
 
   render() {
     if (this.state.error) {
-      // A failed dynamic import is a network/stale-build problem, not a bug — say so, because the
-      // generic "something went wrong" wording sends people hunting for a crash that never happened.
       const isLoadFailure = /dynamically imported module|Importing a module script failed|Loading chunk/i.test(
         this.state.error.message,
       );

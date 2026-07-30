@@ -1,7 +1,6 @@
 import { z } from 'zod';
 import { Role } from '@/types';
 
-// Mirror the backend password policy (Lms.Application/Validation/AuthValidators.cs).
 const password = z
   .string()
   .min(8, 'Password must be at least 8 characters.')

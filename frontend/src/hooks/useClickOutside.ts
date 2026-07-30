@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react';
 
-/** Calls `handler` when a click/touch occurs outside the referenced element. */
 export function useClickOutside<T extends HTMLElement>(handler: () => void) {
   const ref = useRef<T>(null);
   useEffect(() => {

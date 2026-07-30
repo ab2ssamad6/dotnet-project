@@ -41,7 +41,6 @@ export function TrainingDetailPage() {
     const swapWith = ordered[index + direction];
     if (!swapWith) return;
     try {
-      // Swap the two modules' order values (backend has no dedicated reorder endpoint).
       await Promise.all([
         moduleService.update(module.id, { ...toUpdate(module), order: swapWith.order }),
         moduleService.update(swapWith.id, { ...toUpdate(swapWith), order: module.order }),
@@ -82,7 +81,6 @@ export function TrainingDetailPage() {
     <div>
       <Breadcrumbs items={[{ label: 'Trainings', to: '/trainings' }, { label: t.title }]} />
 
-      {/* Header */}
       <Card className="mb-6 overflow-hidden">
         <div className="relative h-36 bg-gradient-to-br from-brand-600 to-brand-800">
           {t.thumbnail && <img src={t.thumbnail} alt="" className="h-full w-full object-cover opacity-60" />}
@@ -126,7 +124,6 @@ export function TrainingDetailPage() {
         </CardBody>
       </Card>
 
-      {/* Modules */}
       <div className="mb-3 flex items-center justify-between">
         <h2 className="text-lg font-semibold text-slate-900">Modules</h2>
         <Button leftIcon={<Icons.plus size={18} />} onClick={() => moduleModal.open()}>

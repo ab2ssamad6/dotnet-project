@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { Input } from './Input';
 import { Icons } from './Icon';
 
-/** Debounced search input. Emits `onSearch` after the user stops typing. */
 export function SearchInput({
   value,
   onSearch,

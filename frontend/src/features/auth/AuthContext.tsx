@@ -33,7 +33,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserDto | null>(() => tokenStore.getUser());
   const [initializing, setInitializing] = useState(true);
 
-  // Rehydrate from storage on mount and wire the forced-logout handler.
   useEffect(() => {
     const stored = tokenStore.getUser();
     const token = tokenStore.getAccessToken();
@@ -63,7 +62,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = useCallback(async () => {
     const refreshToken = tokenStore.getRefreshToken();
     if (refreshToken) {
-      // Best-effort server-side revocation; never block logout on failure.
       await authService.logout(refreshToken).catch(() => undefined);
     }
     tokenStore.clear();

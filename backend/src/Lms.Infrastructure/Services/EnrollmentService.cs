@@ -91,7 +91,6 @@ public class EnrollmentService : IEnrollmentService
         }
 
         var totalModules = await _context.Modules.CountAsync(m => m.TrainingId == trainingId, ct);
-        // The new completion is not persisted yet, so add it to the persisted count.
         var completedCount = await _context.ModuleCompletions.CountAsync(mc => mc.EnrollmentId == enrollment.Id, ct)
                              + (alreadyCompleted ? 0 : 1);
         enrollment.ProgressPercent = totalModules == 0 ? 0 : (int)Math.Round(completedCount * 100.0 / totalModules);
@@ -167,7 +166,6 @@ public class EnrollmentService : IEnrollmentService
         var studentName = user?.FullName ?? "Student";
         var available = enrollment.Status == EnrollmentStatus.Completed;
 
-        // Certificate generation is planned; expose readiness state for now.
         return Result<CertificateDto>.Success(new CertificateDto(
             enrollment.Id, trainingId, enrollment.Training!.Title, studentName, available,
             available ? enrollment.CompletedAt : null,
@@ -184,7 +182,6 @@ public class EnrollmentService : IEnrollmentService
             .Select(m => new { m.Id, m.Title, m.Order })
             .ToListAsync(ct);
 
-        // Query completions from the store (keyed by module) rather than a tracked navigation.
         var completedMap = await _context.ModuleCompletions.AsNoTracking()
             .Where(mc => mc.EnrollmentId == enrollment.Id)
             .GroupBy(mc => mc.ModuleId)

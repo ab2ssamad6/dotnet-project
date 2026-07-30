@@ -18,7 +18,6 @@ public class Trainer : AuditableEntity
 
     public string? Phone { get; set; }
 
-    /// <summary>Optional link to the Identity user that owns this trainer profile.</summary>
     public Guid? UserId { get; set; }
 
     public ICollection<Training> Trainings { get; set; } = new List<Training>();

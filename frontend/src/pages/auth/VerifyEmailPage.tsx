@@ -25,7 +25,6 @@ export function VerifyEmailPage() {
     }
   };
 
-  // Auto-verify when both params are present in the link.
   useEffect(() => {
     const uid = params.get('userId');
     const tok = params.get('token');

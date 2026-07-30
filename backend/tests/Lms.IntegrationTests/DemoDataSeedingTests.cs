@@ -11,10 +11,6 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Lms.IntegrationTests;
 
-/// <summary>
-/// The shared factory disables sample data; this one turns it back on so the demo seeder
-/// actually runs. Configuration sources added later win, so this overrides the base value.
-/// </summary>
 public class DemoDataWebApplicationFactory : LmsWebApplicationFactory
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -64,7 +60,6 @@ public class DemoDataSeedingTests : IClassFixture<DemoDataWebApplicationFactory>
             activities.OfType<Exam>().Should().HaveCount(1);
         }
 
-        // Every TPH discriminator value round-trips.
         (await context.Activities.OfType<Lesson>().CountAsync()).Should().Be(40);
         (await context.Activities.OfType<Exercise>().CountAsync()).Should().Be(20);
         (await context.Activities.OfType<Quiz>().CountAsync()).Should().Be(20);

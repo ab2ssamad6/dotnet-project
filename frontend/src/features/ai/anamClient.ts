@@ -1,10 +1,3 @@
-/**
- * Thin, defensively-typed loader for the Anam.ai browser SDK. The SDK is loaded
- * at runtime from the CDN (kept out of the app bundle) exactly like the original
- * prototype in frontend/script.js. All interaction stays client-side; the backend
- * only mints the streaming session token.
- */
-
 export interface AnamClient {
   streamToVideoElement: (elementId: string) => Promise<void>;
   stopStreaming: () => void;
@@ -29,7 +22,6 @@ export async function loadAnam(): Promise<AnamModule> {
   return modulePromise;
 }
 
-/** Common event names, resolved from the SDK when available with sensible fallbacks. */
 export function resolveEvents(mod: AnamModule) {
   const e = mod.AnamEvent ?? {};
   return {

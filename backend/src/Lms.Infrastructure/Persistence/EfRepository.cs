@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Lms.Infrastructure.Persistence;
 
-/// <summary>Generic EF Core implementation of <see cref="IRepository{T}"/>.</summary>
 public class EfRepository<T> : IRepository<T> where T : AuditableEntity
 {
     private readonly LmsDbContext _context;

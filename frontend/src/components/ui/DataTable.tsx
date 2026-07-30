@@ -7,14 +7,12 @@ import { Pagination } from './Pagination';
 import { Checkbox } from './Checkbox';
 
 export interface Column<T> {
-  /** Stable key; also used as the sort key when `sortable`. */
   key: string;
   header: ReactNode;
   render: (row: T) => ReactNode;
   sortable?: boolean;
   className?: string;
   headerClassName?: string;
-  /** Hide on small screens. */
   hideOnMobile?: boolean;
 }
 
@@ -35,7 +33,6 @@ interface DataTableProps<T> {
   onRowClick?: (row: T) => void;
   sort?: SortState;
   onSortChange?: (sort: SortState) => void;
-  // Pagination (optional)
   pagination?: {
     page: number;
     totalPages: number;
@@ -43,7 +40,6 @@ interface DataTableProps<T> {
     pageSize: number;
     onPageChange: (page: number) => void;
   };
-  // Bulk selection (optional)
   selection?: {
     selectedIds: string[];
     onChange: (ids: string[]) => void;

@@ -38,7 +38,6 @@ public class AuthService : IAuthService
             return Result<AuthResponse>.Conflict("An account with this email already exists.");
 
         var role = request.Role ?? Roles.Student;
-        // Only Student/Trainer may self-register; Administrator is provisioned via seeding.
         if (role == Roles.Administrator)
             return Result<AuthResponse>.Forbidden("Administrator accounts cannot be self-registered.");
 
@@ -56,7 +55,6 @@ public class AuthService : IAuthService
 
         await _userManager.AddToRoleAsync(user, role);
 
-        // Send an email-verification link (logged in dev).
         var emailToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
         await _emailSender.SendAsync(user.Email!, "Confirm your email",
             $"Confirm your account. UserId: {user.Id}, Token: {emailToken}", ct);
@@ -90,7 +88,6 @@ public class AuthService : IAuthService
         if (stored is null || !stored.IsActive || stored.User is null)
             return Result<AuthResponse>.Unauthorized("Invalid or expired refresh token.");
 
-        // Rotate: revoke the old token and issue a fresh one.
         var newRefresh = _tokenService.CreateRefreshToken();
         newRefresh.UserId = stored.UserId;
         stored.RevokedAt = DateTime.UtcNow;
@@ -112,7 +109,6 @@ public class AuthService : IAuthService
             stored.RevokedAt = DateTime.UtcNow;
             await _context.SaveChangesAsync(ct);
         }
-        // Always succeed to avoid leaking token validity.
         return Result.Success();
     }
 
@@ -126,7 +122,6 @@ public class AuthService : IAuthService
                 $"Use this token to reset your password: {token}", ct);
             _logger.LogInformation("Password reset requested for {Email}", user.Email);
         }
-        // Do not reveal whether the email exists.
         return Result.Success();
     }
 

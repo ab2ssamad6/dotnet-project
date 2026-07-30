@@ -1,7 +1,6 @@
 import { AxiosError } from 'axios';
 import type { ProblemDetails } from '@/types';
 
-/** A normalized API error the UI can rely on. */
 export class ApiError extends Error {
   status: number;
   detail?: string;
@@ -18,7 +17,6 @@ export class ApiError extends Error {
   }
 }
 
-/** Convert any thrown value (usually an AxiosError) into a normalized ApiError. */
 export function toApiError(error: unknown): ApiError {
   if (error instanceof ApiError) return error;
 

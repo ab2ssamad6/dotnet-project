@@ -11,7 +11,6 @@ public static class ActivityEndpoints
 {
     public static IEndpointRouteBuilder MapActivityEndpoints(this IEndpointRouteBuilder app)
     {
-        // Trainers/admins see correct answers; students do not.
         static bool CanSeeAnswers(ICurrentUser user) =>
             user.IsInRole(Roles.Administrator) || user.IsInRole(Roles.Trainer);
 

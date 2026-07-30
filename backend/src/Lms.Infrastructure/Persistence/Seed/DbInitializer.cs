@@ -9,7 +9,6 @@ using Microsoft.Extensions.Options;
 
 namespace Lms.Infrastructure.Persistence.Seed;
 
-/// <summary>Applies migrations and seeds roles, default accounts and demo data. Idempotent.</summary>
 public static class DbInitializer
 {
     public static async Task SeedAsync(IServiceProvider services, CancellationToken ct = default)
@@ -64,9 +63,6 @@ public static class DbInitializer
             EmailConfirmed = true
         };
 
-        // Failing loudly matters: AuditableEntity pre-sets the key, so an unpersisted user would
-        // still hand out an Id that later lands in Trainer.UserId and Enrollment.StudentId. Neither
-        // has an FK constraint, so the dangling reference would persist silently.
         var created = await userManager.CreateAsync(user, password);
         if (!created.Succeeded)
             throw new InvalidOperationException(Describe($"create user {email}", created));

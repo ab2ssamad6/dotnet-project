@@ -33,8 +33,6 @@ public class ValidatorTests
     [Fact]
     public void Register_rejects_unknown_role()
     {
-        // The validator enforces that the role name is known; the service separately forbids
-        // self-registering the Administrator role.
         var validator = new RegisterRequestValidator();
         var request = new RegisterRequest("A", "B", "a@lms.local", "Str0ng#Pass", "Str0ng#Pass", "Superuser");
 

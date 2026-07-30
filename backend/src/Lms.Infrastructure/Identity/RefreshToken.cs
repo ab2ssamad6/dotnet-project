@@ -1,6 +1,5 @@
 namespace Lms.Infrastructure.Identity;
 
-/// <summary>A rotating refresh token bound to a single user.</summary>
 public class RefreshToken
 {
     public Guid Id { get; set; } = Guid.NewGuid();
@@ -13,7 +12,6 @@ public class RefreshToken
 
     public DateTime? RevokedAt { get; set; }
 
-    /// <summary>Set when this token is rotated, pointing at its replacement.</summary>
     public string? ReplacedByToken { get; set; }
 
     public Guid UserId { get; set; }

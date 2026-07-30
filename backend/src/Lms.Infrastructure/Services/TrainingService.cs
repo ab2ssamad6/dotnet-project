@@ -101,7 +101,6 @@ public class TrainingService : ITrainingService
         return Result.Success();
     }
 
-    // Reusable entity → DTO projection evaluated in SQL.
     private static readonly System.Linq.Expressions.Expression<Func<Training, TrainingDto>> Projection = t =>
         new TrainingDto(
             t.Id,

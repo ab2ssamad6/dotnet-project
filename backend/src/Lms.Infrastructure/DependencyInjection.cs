@@ -18,12 +18,10 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        // Options
         services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
         services.Configure<AnamOptions>(configuration.GetSection(AnamOptions.SectionName));
         services.Configure<SeedOptions>(configuration.GetSection(SeedOptions.SectionName));
 
-        // Database
         var connectionString = configuration.GetConnectionString("MySql")
             ?? throw new InvalidOperationException("Connection string 'MySql' is not configured.");
         var serverVersion = ResolveServerVersion(configuration, connectionString);
@@ -36,10 +34,6 @@ public static class DependencyInjection
         return services;
     }
 
-    /// <summary>
-    /// Registers the DbContext against a caller-supplied provider (used by integration tests
-    /// to swap MySQL for SQLite) plus all Identity and application services.
-    /// </summary>
     public static IServiceCollection AddInfrastructure(
         this IServiceCollection services,
         IConfiguration configuration,
@@ -103,8 +97,6 @@ public static class DependencyInjection
 
     private static ServerVersion ResolveServerVersion(IConfiguration configuration, string connectionString)
     {
-        // Prefer an explicit version to avoid a live connection during startup;
-        // fall back to auto-detection only when asked.
         var configured = configuration["Database:ServerVersion"];
         if (!string.IsNullOrWhiteSpace(configured))
             return ServerVersion.Parse(configured);

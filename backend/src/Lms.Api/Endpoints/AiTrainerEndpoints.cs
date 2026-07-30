@@ -35,7 +35,6 @@ public static class AiTrainerEndpoints
             .RequireAuthorization()
             .WithSummary("Stop an AI trainer session.");
 
-        // Backwards-compatible alias for the original Node prototype route consumed by frontend/script.js.
         app.MapPost("/api/session-token", async (IAITrainerService service, CancellationToken ct) =>
             {
                 var result = await service.StartSessionAsync(new StartSessionRequest(null, null), ct);

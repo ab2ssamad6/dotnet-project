@@ -28,7 +28,6 @@ public class LmsDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
-        // Apply all IEntityTypeConfiguration<T> in this assembly.
         builder.ApplyConfigurationsFromAssembly(typeof(LmsDbContext).Assembly);
     }
 

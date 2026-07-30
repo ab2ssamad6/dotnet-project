@@ -1,6 +1,5 @@
 namespace Lms.Application.Common;
 
-/// <summary>A single page of results together with paging metadata.</summary>
 public class PagedResult<T>
 {
     public IReadOnlyList<T> Items { get; init; } = Array.Empty<T>();
@@ -22,7 +21,6 @@ public class PagedResult<T>
     }
 }
 
-/// <summary>Common paging/search query parameters accepted by list endpoints.</summary>
 public class PagedQuery
 {
     private const int MaxPageSize = 100;
