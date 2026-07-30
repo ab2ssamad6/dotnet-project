@@ -259,9 +259,16 @@ with a [seeded account](#seeded-accounts).
 
 ### Step 7 — Point the frontend at it
 
-Build `../frontend` with `VITE_API_BASE_URL=https://<your-service>.up.railway.app`, and put that
-frontend's own origin in the API's `Cors__AllowedOrigins` (comma-separated, **no trailing slash**).
-A missing origin surfaces as a browser CORS error while `curl` keeps working.
+Deploy the SPA the same way — a prebuilt GHCR image in this same Railway project: see
+`../frontend/README.md` → "Deploy to Railway". That image bundles an Nginx reverse proxy, so it
+reaches this API over the private network (`API_UPSTREAM=http://<api-service>.railway.internal:8080`)
+and the browser stays same-origin — **no `Cors__AllowedOrigins` entry needed**.
+
+`Cors__AllowedOrigins` only matters if the frontend is hosted statically and calls this API's public
+domain directly. Then list its origin (comma-separated, **no trailing slash**). Note that `*` is not
+a wildcard here — `WithOrigins` compares it literally, so it matches nothing and blocks every
+browser request; leave the variable unset to keep the localhost defaults while testing with
+curl/Swagger, which are unaffected by CORS either way.
 
 ### Step 8 — Ship a new version
 

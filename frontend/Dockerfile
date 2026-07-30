@@ -24,6 +24,12 @@ COPY --from=build /app/dist /usr/share/nginx/html
 # Backend API location the /api proxy forwards to (override at run time).
 ENV API_UPSTREAM=http://api:8080
 
+# Our wrapper resolves $PORT and the DNS resolver, then delegates to the base image's own
+# /docker-entrypoint.sh (which runs the envsubst pass over /etc/nginx/templates/*.template).
+# Named lms-entrypoint.sh so it cannot shadow that script.
+COPY docker-entrypoint.sh /lms-entrypoint.sh
+RUN chmod +x /lms-entrypoint.sh
+
 EXPOSE 80
-# nginx image auto-processes /etc/nginx/templates/*.template with envsubst on start.
+ENTRYPOINT ["/lms-entrypoint.sh"]
 CMD ["nginx", "-g", "daemon off;"]

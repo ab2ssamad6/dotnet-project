@@ -131,7 +131,133 @@ To run **alongside the backend compose** on the same Docker network, add this se
 `../backend/docker-compose.yml` (or attach it to `backend_default`) and set
 `API_UPSTREAM=http://api:8080`.
 
-## 4. Production deployment
+## 4. Deploy to Railway (GHCR image)
+
+Same shape as the backend: GitHub Actions builds the image, pushes it to the **GitHub Container
+Registry**, and Railway only *runs* it — nothing is compiled on Railway. Deploy the backend first
+(`../backend/README.md` → "Deploy to Railway"), because you need its hostname here.
+
+The image is platform-ready: Nginx binds to `$PORT`, `/health` answers locally, and the SPA calls
+same-origin `/api` which Nginx reverse-proxies to `$API_UPSTREAM`. **The backend host is a run-time
+variable, not baked into the build** — so the same image works against any API, and no CORS
+configuration is needed at all.
+
+### What you need first
+
+- Push access to this repository (the image publishes to `ghcr.io/ab2ssamad6/lms-frontend`).
+- A [Railway](https://railway.com) account, with the **backend API service already deployed**.
+
+### Step 1 — Publish the image to GHCR
+
+**Option A — GitHub Actions (recommended).** `.github/workflows/frontend-image.yml` builds
+`frontend/` and pushes `ghcr.io/<owner>/lms-frontend:latest` plus a `sha-<short>` tag on every push
+to `master` that touches `frontend/`. It uses the built-in `GITHUB_TOKEN`, so there is no secret to
+configure. To publish without pushing code: **Actions → Publish frontend image → Run workflow**.
+
+**Option B — from your machine.** Needs a [classic PAT](https://github.com/settings/tokens) with the
+`write:packages` scope:
+
+```bash
+cd frontend
+echo "$GHCR_PAT" | docker login ghcr.io -u <your-github-username> --password-stdin
+docker build --platform linux/amd64 -t ghcr.io/ab2ssamad6/lms-frontend:v1 .
+docker push ghcr.io/ab2ssamad6/lms-frontend:v1
+```
+
+`--platform linux/amd64` matters: Railway runs x86-64, and an image built on Apple Silicon without
+it crashes with `exec format error`.
+
+**Then set the package's visibility.** A freshly published GHCR package is **private**. Either make
+it public — repo → **Packages** → `lms-frontend` → **Package settings** → *Change visibility →
+Public* — or keep it private and hand Railway a PAT with `read:packages` in step 2.
+
+### Step 2 — Add the frontend service from the image
+
+In the **same Railway project as the API** (this is what puts them on one private network):
+**New → Docker Image** → paste:
+
+```
+ghcr.io/ab2ssamad6/lms-frontend:latest
+```
+
+If the package is private, Railway prompts for registry credentials — username = your GitHub
+username, password = a PAT with `read:packages`.
+
+### Step 3 — Set the frontend service variables
+
+Frontend service → **Variables** → **Raw editor**:
+
+```env
+PORT=8080
+API_UPSTREAM=http://${{lms-api.RAILWAY_PRIVATE_DOMAIN}}:8080
+```
+
+That is the whole configuration. Notes:
+
+- **Replace `lms-api` with your API service's actual name** as it appears in the Railway project.
+  The reference resolves to `<service>.railway.internal`; if you'd rather not use a reference, paste
+  the literal hostname. The `:8080` must match the API's `PORT`.
+- **Private networking is IPv6-only and its DNS is not up the instant the container boots.** That is
+  why `nginx.conf` holds the upstream in a `set $api_upstream` variable and `docker-entrypoint.sh`
+  derives a `resolver` from `/etc/resolv.conf`: nginx then resolves per request instead of once at
+  config-load, so it cannot crash-loop waiting for DNS. Don't inline the hostname into `proxy_pass`.
+- **A public upstream also works** if you prefer it — `API_UPSTREAM=https://<api>.up.railway.app`
+  (no trailing slash, no port). Traffic then leaves Railway's network and bills as egress; the
+  `Host $proxy_host` / `proxy_ssl_server_name` settings in `nginx.conf` are what make it route
+  correctly. Private is the better default.
+- **Do not set `VITE_API_BASE_URL`.** It is a *build-time* Vite variable — setting it on Railway does
+  nothing, and baking it in would bypass the proxy and require CORS.
+
+### Step 4 — Expose it and add the health check
+
+1. Frontend service → **Settings → Networking → Generate Domain**, target port **8080** (matching
+   `PORT`). You get `https://<something>.up.railway.app`.
+2. **Settings → Deploy → Health Check Path**: `/health`. The default timeout is fine — this endpoint
+   is served by Nginx itself and does not wait on the backend.
+
+### Step 5 — Deploy and verify
+
+```bash
+FE=https://<your-frontend>.up.railway.app
+
+curl -s $FE/health                       # -> {"status":"healthy"}  (Nginx itself)
+curl -si $FE/dashboard | head -1         # -> 200: SPA history fallback works
+curl -s $FE/api/trainings | head -c 200  # -> JSON from the backend through the proxy
+```
+
+Then open the domain and log in with a [demo account](#demo-accounts-seeded-by-the-backend). If the
+page loads but every API call fails, the proxy is the problem, not the SPA — check `API_UPSTREAM`.
+
+### Step 6 — CORS (only if you skip the proxy)
+
+With this setup the browser only ever talks to the frontend's own origin, so the backend's
+`Cors__AllowedOrigins` is irrelevant. It matters **only** if you build with `VITE_API_BASE_URL`
+pointing at the API's public domain — then add the frontend origin to the backend's
+`Cors__AllowedOrigins` (comma-separated, **no trailing slash**, never `*`, which is compared as a
+literal origin and matches nothing).
+
+### Step 7 — Ship a new version
+
+Railway does not poll the registry. After a new image is published:
+
+- **Same tag (`latest`)** — frontend service → **Deployments** → **Redeploy** to pull the new digest.
+- **New tag (`sha-abc1234`)** — update **Settings → Source → Image**, which deploys on its own. This
+  is the safer habit: the running version stays identifiable.
+
+### Troubleshooting
+
+| Symptom | Cause |
+|---|---|
+| Deploy healthy but the domain 502s | Domain's target port ≠ `PORT`. Set both to 8080. |
+| Container restarts with `host not found in upstream` | `proxy_pass` was given a literal hostname instead of the `$api_upstream` variable — nginx resolves literals at startup and exits. |
+| `exec format error` in logs | Image built on ARM without `--platform linux/amd64`. |
+| `denied` / `manifest unknown` when Railway pulls | GHCR package still private with no `read:packages` credentials attached. |
+| SPA loads, all `/api` calls 502 | `API_UPSTREAM` wrong service name, wrong port, or the API is in a different Railway project (no shared private network). |
+| `/api` calls 404 against a *public* upstream | `Host` forwarded as the frontend's own host. Fixed by `Host $proxy_host` — don't revert it. |
+| Deep links 404 on refresh | SPA fallback missing — only happens if `nginx.conf` was replaced. |
+| Browser CORS error | You baked `VITE_API_BASE_URL` and bypassed the proxy — see step 6. |
+
+## 5. Other production targets
 
 The `dist/` output is a static SPA and can be deployed anywhere. Two common paths:
 
