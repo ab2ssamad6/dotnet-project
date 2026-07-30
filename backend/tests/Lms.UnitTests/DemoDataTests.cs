@@ -32,10 +32,10 @@ public class DemoDataTests
     public void Catalog_defines_the_four_demo_courses()
     {
         DemoCatalog.Courses.Select(c => c.Title).Should().BeEquivalentTo(
-            "Machine Learning Foundations",
-            "Building APIs with ASP.NET Core",
-            "Blockchain Fundamentals",
-            "Cyber Security Essentials");
+            "Prompt Engineering for Production LLM Apps",
+            "Modern React: Interfaces That Scale",
+            "Product Discovery and UX Research",
+            "Application Security for Developers");
     }
 
     [Theory]

@@ -65,8 +65,8 @@ public class DemoDataSeedingTests : IClassFixture<DemoDataWebApplicationFactory>
         (await context.Activities.OfType<Quiz>().CountAsync()).Should().Be(20);
         (await context.Activities.OfType<Exam>().CountAsync()).Should().Be(4);
 
-        (await context.Questions.CountAsync()).Should().Be(132);
-        (await context.Answers.CountAsync()).Should().Be(480);
+        (await context.Questions.CountAsync()).Should().Be(112);
+        (await context.Answers.CountAsync()).Should().Be(400);
     }
 
     [Fact]
