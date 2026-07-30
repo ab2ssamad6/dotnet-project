@@ -5,36 +5,84 @@
 @layer base {
   html {
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   body {
-    @apply bg-slate-50 text-slate-900 antialiased;
+    @apply bg-canvas text-ink-800 antialiased;
+    font-feature-settings: 'cv05' 1, 'ss03' 1;
   }
   :root {
     color-scheme: light;
   }
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply text-ink-900;
+    text-wrap: balance;
+  }
+  ::selection {
+    @apply bg-brand-200 text-brand-900;
+  }
 }
 
 @layer components {
+  /* Frosted card surface used across panels, tables and dialogs. */
+  .surface {
+    @apply rounded-2xl border border-ink-200/80 bg-white shadow-card;
+  }
+
+  /* Page canvas glow — a soft brand wash behind the app shell. */
+  .canvas-glow {
+    background-image:
+      radial-gradient(60rem 24rem at 12% -8%, rgb(15 122 116 / 0.07), transparent 60%),
+      radial-gradient(46rem 22rem at 92% -12%, rgb(235 196 104 / 0.12), transparent 60%);
+  }
+
   .skeleton {
-    @apply relative overflow-hidden rounded-md bg-slate-200;
+    @apply relative overflow-hidden rounded-lg bg-ink-200/70;
   }
   .skeleton::after {
-    @apply absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/60 to-transparent;
+    @apply absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/70 to-transparent;
     content: '';
-    animation: shimmer 1.5s infinite;
+    animation: shimmer 1.6s infinite;
   }
+
   .focus-ring {
-    @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2;
+    @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-white;
+  }
+
+  /* Small uppercase eyebrow label above headings. */
+  .eyebrow {
+    @apply text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-400;
+  }
+
+  /* Numeric readouts keep their columns aligned. */
+  .tnum {
+    font-variant-numeric: tabular-nums;
   }
 }
 
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 11px;
+  height: 11px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  @apply rounded-full bg-slate-300;
+  @apply rounded-full border-[3px] border-solid border-transparent bg-ink-300 bg-clip-content;
 }
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-slate-400;
+  @apply bg-ink-400;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

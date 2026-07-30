@@ -122,6 +122,11 @@ export function TrainingFormModal({ open, onClose, training, onSaved }: Props) {
       onClose={onClose}
       size="xl"
       title={training ? 'Edit training' : 'New training'}
+      description={
+        training
+          ? 'Update the details learners see in the catalog.'
+          : 'Set up the outline — you can add modules and activities next.'
+      }
       closeOnBackdrop={!isSubmitting}
       footer={
         <>
@@ -183,10 +188,10 @@ export function TrainingFormModal({ open, onClose, training, onSaved }: Props) {
           error={errors.thumbnail?.message}
           {...register('thumbnail')}
         />
-        <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+        <div className="rounded-xl border border-ink-200/80 bg-ink-50/70 p-4">
           <Checkbox
-            label="Published"
-            description="Published trainings appear in the student catalog and can be enrolled in."
+            label="Publish to the catalog"
+            description="Published trainings are visible to learners and open for enrollment."
             {...register('published')}
           />
         </div>

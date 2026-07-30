@@ -52,7 +52,7 @@ export function DataTable<T>({
   data,
   rowKey,
   loading,
-  emptyTitle = 'No records found',
+  emptyTitle = 'Nothing to show yet',
   emptyDescription,
   emptyAction,
   onRowClick,
@@ -86,19 +86,19 @@ export function DataTable<T>({
   };
 
   return (
-    <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-card">
+    <div className="surface overflow-hidden">
       {selection && selection.selectedIds.length > 0 && (
-        <div className="flex items-center justify-between gap-3 border-b border-brand-100 bg-brand-50 px-4 py-2.5 text-sm">
-          <span className="font-medium text-brand-700">{selection.selectedIds.length} selected</span>
+        <div className="flex items-center justify-between gap-3 border-b border-brand-200/60 bg-brand-50 px-5 py-3 text-sm">
+          <span className="font-semibold text-brand-800">{selection.selectedIds.length} selected</span>
           <div className="flex items-center gap-2">{selection.renderActions?.(selection.selectedIds)}</div>
         </div>
       )}
       <div className="overflow-x-auto">
         <table className="w-full min-w-[560px] border-collapse text-left text-sm">
           <thead>
-            <tr className="border-b border-slate-200 bg-slate-50/80">
+            <tr className="border-b border-ink-200/70 bg-ink-50/60">
               {selection && (
-                <th className="w-10 px-4 py-3">
+                <th className="w-10 px-5 py-3">
                   <Checkbox
                     checked={!!allSelected}
                     ref={(el) => {
@@ -113,7 +113,7 @@ export function DataTable<T>({
                 <th
                   key={col.key}
                   className={cn(
-                    'px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500',
+                    'px-5 py-3 text-[11px] font-bold uppercase tracking-[0.08em] text-ink-500',
                     col.hideOnMobile && 'hidden md:table-cell',
                     col.headerClassName,
                   )}
@@ -121,10 +121,10 @@ export function DataTable<T>({
                   {col.sortable && onSortChange ? (
                     <button
                       onClick={() => toggleSort(col.key)}
-                      className="inline-flex items-center gap-1 hover:text-slate-700"
+                      className="focus-ring inline-flex items-center gap-1 rounded transition-colors hover:text-ink-800"
                     >
                       {col.header}
-                      <span className="text-slate-400">
+                      <span className={sort?.key === col.key ? 'text-brand-600' : 'text-ink-400'}>
                         {sort?.key === col.key ? (
                           sort.direction === 'asc' ? (
                             <Icons.arrowUp size={13} />
@@ -144,7 +144,7 @@ export function DataTable<T>({
             </tr>
           </thead>
           {!loading && (
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-ink-100">
               {data.map((row) => {
                 const id = rowKey(row);
                 return (
@@ -152,13 +152,13 @@ export function DataTable<T>({
                     key={id}
                     onClick={() => onRowClick?.(row)}
                     className={cn(
-                      'transition-colors',
-                      onRowClick && 'cursor-pointer hover:bg-slate-50',
-                      selection?.selectedIds.includes(id) && 'bg-brand-50/40',
+                      'group transition-colors',
+                      onRowClick && 'cursor-pointer hover:bg-ink-50/70',
+                      selection?.selectedIds.includes(id) && 'bg-brand-50/50',
                     )}
                   >
                     {selection && (
-                      <td className="w-10 px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                      <td className="w-10 px-5 py-4" onClick={(e) => e.stopPropagation()}>
                         <Checkbox
                           checked={selection.selectedIds.includes(id)}
                           onChange={() => toggleOne(id)}
@@ -170,7 +170,7 @@ export function DataTable<T>({
                       <td
                         key={col.key}
                         className={cn(
-                          'px-4 py-3.5 text-slate-700',
+                          'px-5 py-4 align-middle text-ink-700',
                           col.hideOnMobile && 'hidden md:table-cell',
                           col.className,
                         )}
@@ -190,7 +190,7 @@ export function DataTable<T>({
 
       {!loading && data.length === 0 && (
         <EmptyState
-          icon={<Icons.list size={26} />}
+          icon={<Icons.list size={24} />}
           title={emptyTitle}
           description={emptyDescription}
           action={emptyAction}

@@ -24,16 +24,29 @@ interface Props {
 }
 
 const TITLES: Record<ActivityType, string> = {
-  [ActivityType.Lesson]: 'Add lesson',
-  [ActivityType.Exercise]: 'Add exercise',
-  [ActivityType.Quiz]: 'Add quiz',
-  [ActivityType.Exam]: 'Add exam',
+  [ActivityType.Lesson]: 'Add a lesson',
+  [ActivityType.Exercise]: 'Add an exercise',
+  [ActivityType.Quiz]: 'Add a quiz',
+  [ActivityType.Exam]: 'Add an exam',
+};
+
+const SUBTITLES: Record<ActivityType, string> = {
+  [ActivityType.Lesson]: 'Reading material and video for learners to work through.',
+  [ActivityType.Exercise]: 'Hands-on practice with clear instructions and an expected outcome.',
+  [ActivityType.Quiz]: 'A short scored check — set the pass mark and an optional time limit.',
+  [ActivityType.Exam]: 'A formal assessment, scored automatically against your answer key.',
 };
 
 export function ActivityFormModal({ open, onClose, moduleId, type, nextOrder, onSaved }: Props) {
   const isAssessment = type === ActivityType.Quiz || type === ActivityType.Exam;
   return (
-    <Modal open={open} onClose={onClose} size={isAssessment ? 'xl' : 'lg'} title={TITLES[type]}>
+    <Modal
+      open={open}
+      onClose={onClose}
+      size={isAssessment ? 'xl' : 'lg'}
+      title={TITLES[type]}
+      description={SUBTITLES[type]}
+    >
       {type === ActivityType.Lesson && (
         <LessonForm moduleId={moduleId} nextOrder={nextOrder} onClose={onClose} onSaved={onSaved} />
       )}
@@ -49,7 +62,7 @@ export function ActivityFormModal({ open, onClose, moduleId, type, nextOrder, on
 
 function Footer({ onClose, loading, label }: { onClose: () => void; loading: boolean; label: string }) {
   return (
-    <div className="mt-6 flex items-center justify-end gap-3 border-t border-slate-100 pt-4">
+    <div className="mt-7 flex items-center justify-end gap-3 border-t border-ink-100 pt-5">
       <Button type="button" variant="outline" onClick={onClose} disabled={loading}>
         Cancel
       </Button>
@@ -229,7 +242,7 @@ function AssessmentForm({
         <Input label="Passing score (%)" type="number" min={0} max={100} error={errors.passingScore?.message} {...register('passingScore')} />
         <Input label="Time limit (min)" type="number" min={0} placeholder="Optional" error={errors.durationMinutes?.message} {...register('durationMinutes')} />
       </div>
-      <div className="border-t border-slate-100 pt-4">
+      <div className="border-t border-ink-100 pt-4">
         <QuestionsBuilder control={control} register={register} errors={errors} />
       </div>
       <Footer onClose={onClose} loading={isSubmitting} label={type === ActivityType.Quiz ? 'Add quiz' : 'Add exam'} />

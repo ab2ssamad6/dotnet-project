@@ -20,12 +20,12 @@ function AnswersEditor({
 
   return (
     <div className="space-y-2">
-      <p className="text-xs font-medium text-slate-500">Answers — tick the correct one(s)</p>
+      <p className="eyebrow">Answers — tick the correct one(s)</p>
       {fields.map((field, aIndex) => (
         <div key={field.id} className="flex items-center gap-2">
           <input
             type="checkbox"
-            className="h-4 w-4 shrink-0 rounded border-slate-300 accent-brand-600"
+            className="focus-ring h-[18px] w-[18px] shrink-0 cursor-pointer rounded-[5px] border-ink-300 accent-brand-700"
             aria-label="Correct answer"
             {...register(`questions.${qIndex}.answers.${aIndex}.isCorrect`)}
           />
@@ -69,7 +69,7 @@ export function QuestionsBuilder({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h4 className="text-sm font-semibold text-slate-700">Questions</h4>
+        <h4 className="text-sm font-bold tracking-[-0.01em] text-ink-800">Questions</h4>
         <Button
           type="button"
           variant="outline"
@@ -92,8 +92,8 @@ export function QuestionsBuilder({
       </div>
 
       {fields.length === 0 && (
-        <p className="rounded-lg border border-dashed border-slate-200 py-6 text-center text-sm text-slate-400">
-          No questions yet. Add at least one.
+        <p className="rounded-xl border border-dashed border-ink-300/80 py-7 text-center text-[13px] text-ink-400">
+          No questions yet — add at least one to score this assessment.
         </p>
       )}
 
@@ -102,9 +102,9 @@ export function QuestionsBuilder({
       )}
 
       {fields.map((field, qIndex) => (
-        <div key={field.id} className="rounded-xl border border-slate-200 bg-slate-50/60 p-4">
+        <div key={field.id} className="rounded-2xl border border-ink-200/80 bg-ink-50/70 p-4">
           <div className="mb-3 flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wide text-slate-400">Question {qIndex + 1}</span>
+            <span className="eyebrow">Question {qIndex + 1}</span>
             <Button
               type="button"
               variant="ghost"

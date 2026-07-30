@@ -27,18 +27,23 @@ export function ForgotPasswordPage() {
 
   if (sent) {
     return (
-      <Card className="p-8 text-center">
-        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
-          <Icons.check size={28} />
+      <Card className="p-8 text-center shadow-raised sm:p-9">
+        <div className="relative mx-auto mb-5 w-fit">
+          <span className="absolute inset-0 -m-2 rounded-2xl bg-green-100/70 blur-md" aria-hidden />
+          <span className="relative flex h-14 w-14 items-center justify-center rounded-2xl border border-green-200/70 bg-white text-green-600 shadow-card">
+            <Icons.mail size={24} />
+          </span>
         </div>
-        <h1 className="text-xl font-bold text-slate-900">Check your email</h1>
-        <p className="mt-2 text-sm text-slate-500">
-          If an account exists for <span className="font-medium text-slate-700">{getValues('email')}</span>, we've sent
-          a password-reset token. Use it on the reset page to choose a new password.
+        <h1 className="font-display text-[23px] font-semibold tracking-[-0.02em] text-ink-900">Check your inbox</h1>
+        <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-ink-500">
+          If an account exists for <span className="font-semibold text-ink-800">{getValues('email')}</span>, a
+          reset token is on its way. Paste it on the next screen to choose a new password.
         </p>
-        <div className="mt-6 flex flex-col gap-2">
+        <div className="mt-7 flex flex-col gap-2.5">
           <Link to="/reset-password">
-            <Button fullWidth>Enter reset token</Button>
+            <Button fullWidth rightIcon={<Icons.arrowRight size={16} />}>
+              Enter reset token
+            </Button>
           </Link>
           <Link to="/login">
             <Button variant="ghost" fullWidth>
@@ -51,17 +56,20 @@ export function ForgotPasswordPage() {
   }
 
   return (
-    <Card className="p-8">
-      <h1 className="text-2xl font-bold text-slate-900">Forgot password?</h1>
-      <p className="mt-1 text-sm text-slate-500">
-        Enter your email and we'll send you a token to reset your password.
+    <Card className="p-8 shadow-raised sm:p-9">
+      <p className="eyebrow">Account recovery</p>
+      <h1 className="mt-2 font-display text-[27px] font-semibold tracking-[-0.02em] text-ink-900">
+        Reset your password
+      </h1>
+      <p className="mt-2 text-sm leading-relaxed text-ink-500">
+        Tell us the email on your account and we'll send a single-use token to set a new password.
       </p>
-      <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="mt-7 space-y-4">
         <Input
-          label="Email"
+          label="Work email"
           type="email"
-          placeholder="you@example.com"
-          leftIcon={<Icons.profile size={18} />}
+          placeholder="you@company.com"
+          leftIcon={<Icons.mail size={17} />}
           error={errors.email?.message}
           required
           {...register('email')}
@@ -70,9 +78,9 @@ export function ForgotPasswordPage() {
           Send reset token
         </Button>
       </form>
-      <p className="mt-6 text-center text-sm text-slate-500">
+      <p className="mt-7 text-center text-sm text-ink-500">
         Remembered it?{' '}
-        <Link to="/login" className="font-medium text-brand-600 hover:underline">
+        <Link to="/login" className="font-semibold text-brand-700 transition-colors hover:text-brand-800">
           Sign in
         </Link>
       </p>

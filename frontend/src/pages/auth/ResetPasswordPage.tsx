@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { Button, Card, Input } from '@/components/ui';
+import { Button, Card, Icons, Input } from '@/components/ui';
 import { zodResolver } from '@/utils/zodResolver';
 import { resetPasswordSchema, type ResetPasswordForm } from '@/features/auth/schemas';
 import { authService } from '@/services';
@@ -27,7 +27,7 @@ export function ResetPasswordPage() {
   const onSubmit = async (data: ResetPasswordForm) => {
     try {
       await authService.resetPassword(data);
-      notify.success('Password reset successfully. Please sign in.');
+      notify.success('Password updated. You can sign in now.');
       navigate('/login', { replace: true });
     } catch (err) {
       notify.apiError(err);
@@ -35,11 +35,21 @@ export function ResetPasswordPage() {
   };
 
   return (
-    <Card className="p-8">
-      <h1 className="text-2xl font-bold text-slate-900">Reset password</h1>
-      <p className="mt-1 text-sm text-slate-500">Enter the token you received and choose a new password.</p>
-      <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-4">
-        <Input label="Email" type="email" error={errors.email?.message} required {...register('email')} />
+    <Card className="p-8 shadow-raised sm:p-9">
+      <p className="eyebrow">Account recovery</p>
+      <h1 className="mt-2 font-display text-[27px] font-semibold tracking-[-0.02em] text-ink-900">
+        Choose a new password
+      </h1>
+      <p className="mt-2 text-sm text-ink-500">Paste the token from your email, then set the password you'll use.</p>
+      <form onSubmit={handleSubmit(onSubmit)} className="mt-7 space-y-4">
+        <Input
+          label="Work email"
+          type="email"
+          leftIcon={<Icons.mail size={17} />}
+          error={errors.email?.message}
+          required
+          {...register('email')}
+        />
         <Input
           label="Reset token"
           placeholder="Paste the token from your email"
@@ -50,7 +60,8 @@ export function ResetPasswordPage() {
         <Input
           label="New password"
           type="password"
-          hint="8+ chars with upper, lower, digit & symbol."
+          leftIcon={<Icons.lock size={17} />}
+          hint="At least 8 characters, with upper and lower case, a digit and a symbol."
           error={errors.newPassword?.message}
           required
           {...register('newPassword')}
@@ -58,16 +69,17 @@ export function ResetPasswordPage() {
         <Input
           label="Confirm new password"
           type="password"
+          leftIcon={<Icons.lock size={17} />}
           error={errors.confirmPassword?.message}
           required
           {...register('confirmPassword')}
         />
         <Button type="submit" fullWidth size="lg" loading={isSubmitting}>
-          Reset password
+          Update password
         </Button>
       </form>
-      <p className="mt-6 text-center text-sm text-slate-500">
-        <Link to="/login" className="font-medium text-brand-600 hover:underline">
+      <p className="mt-7 text-center text-sm">
+        <Link to="/login" className="font-semibold text-brand-700 transition-colors hover:text-brand-800">
           Back to sign in
         </Link>
       </p>

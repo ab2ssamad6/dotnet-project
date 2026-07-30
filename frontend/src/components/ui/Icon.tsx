@@ -273,6 +273,76 @@ export const Icons = {
       <path d="m2 17 10 5 10-5M2 12l10 5 10-5" />
     </svg>
   ),
+  sparkle: (p: IconProps) => (
+    <svg {...base(p)}>
+      <path d="M12 3l1.8 4.9L18.7 9.7l-4.9 1.8L12 16.4l-1.8-4.9L5.3 9.7l4.9-1.8L12 3z" />
+      <path d="M18.5 15.5l.7 1.9 1.9.7-1.9.7-.7 1.9-.7-1.9-1.9-.7 1.9-.7.7-1.9z" />
+    </svg>
+  ),
+  arrowRight: (p: IconProps) => (
+    <svg {...base(p)}>
+      <path d="M5 12h14M13 6l6 6-6 6" />
+    </svg>
+  ),
+  trendUp: (p: IconProps) => (
+    <svg {...base(p)}>
+      <path d="M3 17l6-6 4 4 8-8" />
+      <path d="M15 7h6v6" />
+    </svg>
+  ),
+  target: (p: IconProps) => (
+    <svg {...base(p)}>
+      <circle cx="12" cy="12" r="9" />
+      <circle cx="12" cy="12" r="5" />
+      <circle cx="12" cy="12" r="1.2" />
+    </svg>
+  ),
+  filter: (p: IconProps) => (
+    <svg {...base(p)}>
+      <path d="M4 5h16M7 12h10M10 19h4" />
+    </svg>
+  ),
+  mail: (p: IconProps) => (
+    <svg {...base(p)}>
+      <rect x="2.5" y="4.5" width="19" height="15" rx="2.5" />
+      <path d="m3.5 7 8.5 6 8.5-6" />
+    </svg>
+  ),
+  lock: (p: IconProps) => (
+    <svg {...base(p)}>
+      <rect x="4" y="10.5" width="16" height="10.5" rx="2.5" />
+      <path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" />
+    </svg>
+  ),
+  shield: (p: IconProps) => (
+    <svg {...base(p)}>
+      <path d="M12 2.5 4.5 5.5v6c0 4.6 3.1 8.6 7.5 10 4.4-1.4 7.5-5.4 7.5-10v-6L12 2.5z" />
+      <path d="m9 12 2.2 2.2L15.5 10" />
+    </svg>
+  ),
+  help: (p: IconProps) => (
+    <svg {...base(p)}>
+      <circle cx="12" cy="12" r="9.5" />
+      <path d="M9.5 9.5A2.5 2.5 0 0 1 14.5 10c0 1.7-2.5 1.9-2.5 3.6M12 17h.01" />
+    </svg>
+  ),
+  external: (p: IconProps) => (
+    <svg {...base(p)}>
+      <path d="M14 4h6v6M20 4l-8.5 8.5" />
+      <path d="M18 14.5V19a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 19V7.5A1.5 1.5 0 0 1 5 6h4.5" />
+    </svg>
+  ),
+  calendar: (p: IconProps) => (
+    <svg {...base(p)}>
+      <rect x="3.5" y="5" width="17" height="15.5" rx="2.5" />
+      <path d="M3.5 10h17M8.5 3v4M15.5 3v4" />
+    </svg>
+  ),
+  bolt: (p: IconProps) => (
+    <svg {...base(p)}>
+      <path d="M13.5 2.5 4.8 13.2h5.4l-.9 8.3 8.9-11h-5.5l.8-8z" />
+    </svg>
+  ),
 } as const;
 
 export type IconName = keyof typeof Icons;

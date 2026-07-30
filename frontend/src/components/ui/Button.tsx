@@ -2,7 +2,7 @@ import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react';
 import { cn } from '@/utils/cn';
 import { Spinner } from './Spinner';
 
-type Variant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
+type Variant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'soft' | 'danger';
 type Size = 'sm' | 'md' | 'lg' | 'icon';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -15,18 +15,22 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variants: Record<Variant, string> = {
-  primary: 'bg-brand-600 text-white hover:bg-brand-700 active:bg-brand-800 shadow-sm disabled:bg-brand-300',
-  secondary: 'bg-slate-100 text-slate-800 hover:bg-slate-200 active:bg-slate-300 disabled:opacity-60',
-  outline: 'border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 active:bg-slate-100 disabled:opacity-60',
-  ghost: 'text-slate-600 hover:bg-slate-100 active:bg-slate-200 disabled:opacity-60',
-  danger: 'bg-rose-600 text-white hover:bg-rose-700 active:bg-rose-800 shadow-sm disabled:bg-rose-300',
+  primary:
+    'bg-brand-700 text-white shadow-sm hover:bg-brand-800 active:bg-brand-900 disabled:bg-brand-700/40 disabled:shadow-none',
+  secondary:
+    'bg-ink-900 text-ink-50 shadow-sm hover:bg-ink-800 active:bg-ink-950 disabled:bg-ink-900/40 disabled:shadow-none',
+  outline:
+    'border border-ink-200 bg-white text-ink-700 shadow-card hover:border-ink-300 hover:bg-ink-50 active:bg-ink-100 disabled:opacity-55',
+  ghost: 'text-ink-600 hover:bg-ink-100 hover:text-ink-900 active:bg-ink-200/70 disabled:opacity-55',
+  soft: 'bg-brand-50 text-brand-800 hover:bg-brand-100 active:bg-brand-200/70 disabled:opacity-55',
+  danger: 'bg-rose-600 text-white shadow-sm hover:bg-rose-700 active:bg-rose-800 disabled:bg-rose-600/40',
 };
 
 const sizes: Record<Size, string> = {
-  sm: 'h-8 px-3 text-sm gap-1.5',
+  sm: 'h-9 px-3 text-[13px] gap-1.5',
   md: 'h-10 px-4 text-sm gap-2',
-  lg: 'h-12 px-6 text-base gap-2',
-  icon: 'h-9 w-9 justify-center',
+  lg: 'h-12 px-6 text-[15px] gap-2.5',
+  icon: 'h-10 w-10 justify-center',
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
@@ -38,7 +42,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       ref={ref}
       disabled={disabled || loading}
       className={cn(
-        'focus-ring inline-flex items-center rounded-lg font-medium transition-colors disabled:cursor-not-allowed',
+        'focus-ring inline-flex select-none items-center whitespace-nowrap rounded-lg font-semibold tracking-[-0.01em]',
+        'transition-[background-color,border-color,color,box-shadow,transform] duration-150',
+        'active:translate-y-px disabled:cursor-not-allowed disabled:active:translate-y-0',
         variants[variant],
         sizes[size],
         fullWidth && 'w-full justify-center',

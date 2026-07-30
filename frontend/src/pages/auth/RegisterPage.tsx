@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
-import { Button, Card, Input, Select } from '@/components/ui';
+import { Button, Card, Icons, Input, Select } from '@/components/ui';
 import { zodResolver } from '@/utils/zodResolver';
 import { registerSchema, type RegisterForm } from '@/features/auth/schemas';
 import { useAuth } from '@/hooks/useAuth';
@@ -30,7 +30,7 @@ export function RegisterPage() {
         confirmPassword: data.confirmPassword,
         role: data.role,
       });
-      notify.success(`Account created. Welcome, ${user.firstName}!`);
+      notify.success(`Account ready. Welcome aboard, ${user.firstName}.`);
       navigate('/dashboard', { replace: true });
     } catch (err) {
       notify.apiError(err);
@@ -38,31 +38,35 @@ export function RegisterPage() {
   };
 
   return (
-    <Card className="p-8">
-      <h1 className="text-2xl font-bold text-slate-900">Create your account</h1>
-      <p className="mt-1 text-sm text-slate-500">Join the platform as a student or trainer.</p>
+    <Card className="p-8 shadow-raised sm:p-9">
+      <p className="eyebrow">Get started</p>
+      <h1 className="mt-2 font-display text-[27px] font-semibold tracking-[-0.02em] text-ink-900">
+        Create your account
+      </h1>
+      <p className="mt-2 text-sm text-ink-500">Join as a learner, or as a trainer who builds the courses.</p>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="mt-7 space-y-4">
         <div className="grid grid-cols-2 gap-3">
           <Input label="First name" placeholder="Jane" error={errors.firstName?.message} required {...register('firstName')} />
           <Input label="Last name" placeholder="Doe" error={errors.lastName?.message} required {...register('lastName')} />
         </div>
         <Input
-          label="Email"
+          label="Work email"
           type="email"
           autoComplete="email"
-          placeholder="you@example.com"
+          placeholder="you@company.com"
+          leftIcon={<Icons.mail size={17} />}
           error={errors.email?.message}
           required
           {...register('email')}
         />
         <Select
-          label="I am a…"
+          label="How will you use the platform?"
           error={errors.role?.message}
           required
           options={[
-            { value: Role.Student, label: 'Student — enroll and learn' },
-            { value: Role.Trainer, label: 'Trainer — create and manage content' },
+            { value: Role.Student, label: 'Learner — enroll in trainings and track progress' },
+            { value: Role.Trainer, label: 'Trainer — build and publish course content' },
           ]}
           {...register('role')}
         />
@@ -71,7 +75,8 @@ export function RegisterPage() {
           type="password"
           autoComplete="new-password"
           placeholder="••••••••"
-          hint="8+ chars with upper, lower, digit & symbol."
+          leftIcon={<Icons.lock size={17} />}
+          hint="At least 8 characters, with upper and lower case, a digit and a symbol."
           error={errors.password?.message}
           required
           {...register('password')}
@@ -81,20 +86,21 @@ export function RegisterPage() {
           type="password"
           autoComplete="new-password"
           placeholder="••••••••"
+          leftIcon={<Icons.lock size={17} />}
           error={errors.confirmPassword?.message}
           required
           {...register('confirmPassword')}
         />
 
-        <Button type="submit" fullWidth size="lg" loading={isSubmitting}>
+        <Button type="submit" fullWidth size="lg" loading={isSubmitting} rightIcon={<Icons.arrowRight size={17} />}>
           Create account
         </Button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-slate-500">
-        Already have an account?{' '}
-        <Link to="/login" className="font-medium text-brand-600 hover:underline">
-          Sign in
+      <p className="mt-7 text-center text-sm text-ink-500">
+        Already registered?{' '}
+        <Link to="/login" className="font-semibold text-brand-700 transition-colors hover:text-brand-800">
+          Sign in instead
         </Link>
       </p>
     </Card>

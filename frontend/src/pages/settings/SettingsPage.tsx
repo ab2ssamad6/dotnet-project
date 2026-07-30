@@ -19,7 +19,7 @@ export function SettingsPage() {
   const onSubmit = async (data: ChangePasswordForm) => {
     try {
       await authService.changePassword(data);
-      notify.success('Password changed successfully.');
+      notify.success('Password updated.');
       reset();
     } catch (err) {
       notify.apiError(err);
@@ -28,17 +28,22 @@ export function SettingsPage() {
 
   return (
     <div>
-      <PageHeader title="Settings" description="Manage your account and preferences." />
+      <PageHeader
+        eyebrow="Workspace"
+        title="Settings"
+        description="Security and interface preferences for your account."
+      />
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-5 lg:grid-cols-2">
         <Card>
-          <CardHeader title="Change password" subtitle="Update the password you use to sign in." />
+          <CardHeader title="Password" subtitle="Change the password you use to sign in." />
           <CardBody>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <Input
                 label="Current password"
                 type="password"
                 autoComplete="current-password"
+                leftIcon={<Icons.lock size={17} />}
                 error={errors.currentPassword?.message}
                 required
                 {...register('currentPassword')}
@@ -47,7 +52,8 @@ export function SettingsPage() {
                 label="New password"
                 type="password"
                 autoComplete="new-password"
-                hint="8+ chars with upper, lower, digit & symbol."
+                leftIcon={<Icons.lock size={17} />}
+                hint="At least 8 characters, with upper and lower case, a digit and a symbol."
                 error={errors.newPassword?.message}
                 required
                 {...register('newPassword')}
@@ -56,42 +62,47 @@ export function SettingsPage() {
                 label="Confirm new password"
                 type="password"
                 autoComplete="new-password"
+                leftIcon={<Icons.lock size={17} />}
                 error={errors.confirmPassword?.message}
                 required
                 {...register('confirmPassword')}
               />
-              <Button type="submit" loading={isSubmitting} leftIcon={<Icons.check size={17} />}>
+              <Button type="submit" loading={isSubmitting} leftIcon={<Icons.shield size={16} />}>
                 Update password
               </Button>
             </form>
           </CardBody>
         </Card>
 
-        <div className="space-y-6">
+        <div className="space-y-5">
           <Card>
-            <CardHeader title="Preferences" subtitle="Local UI preferences (stored in this browser)." />
+            <CardHeader title="Preferences" subtitle="Interface options, remembered on this device." />
             <CardBody className="space-y-4">
+              <Checkbox label="Email notifications" description="Product updates and course announcements." defaultChecked />
               <Checkbox
-                label="Email notifications"
-                description="Receive product updates by email."
+                label="In-app notifications"
+                description="Enrollment and assessment alerts in the bell menu."
                 defaultChecked
               />
-              <Checkbox label="In-app notifications" description="Show enrollment and assessment alerts." defaultChecked />
-              <Checkbox label="Compact tables" description="Show denser data tables." />
+              <Checkbox label="Compact tables" description="Tighter row spacing in data tables." />
             </CardBody>
           </Card>
 
           <Card>
-            <CardHeader title="Account" />
+            <CardHeader title="Account" subtitle="Where you're signed in right now" />
             <CardBody>
-              <dl className="space-y-3 text-sm">
-                <div className="flex justify-between">
-                  <dt className="text-slate-500">Signed in as</dt>
-                  <dd className="font-medium text-slate-800">{user?.email}</dd>
+              <dl className="space-y-3.5 text-sm">
+                <div className="flex items-center justify-between gap-4">
+                  <dt className="text-ink-500">Signed in as</dt>
+                  <dd className="truncate font-semibold text-ink-800">{user?.email}</dd>
                 </div>
-                <div className="flex justify-between">
-                  <dt className="text-slate-500">Email verified</dt>
-                  <dd className="font-medium text-slate-800">{user?.emailConfirmed ? 'Yes' : 'No'}</dd>
+                <div className="flex items-center justify-between gap-4">
+                  <dt className="text-ink-500">Email verified</dt>
+                  <dd
+                    className={`font-semibold ${user?.emailConfirmed ? 'text-green-600' : 'text-amber-600'}`}
+                  >
+                    {user?.emailConfirmed ? 'Yes' : 'Not yet'}
+                  </dd>
                 </div>
               </dl>
             </CardBody>

@@ -29,13 +29,13 @@ export function ActivitiesPanel({ moduleId }: { moduleId: string }) {
 
   const handleDelete = async (activity: ActivityDto) => {
     const ok = await confirm({
-      title: 'Delete activity',
+      title: 'Delete this activity?',
       message: (
         <>
-          Delete <span className="font-medium">"{activity.title}"</span>?
+          <span className="font-semibold text-ink-800">"{activity.title}"</span> will be removed from the module.
         </>
       ),
-      confirmLabel: 'Delete',
+      confirmLabel: 'Delete activity',
     });
     if (!ok) return;
     try {
@@ -50,7 +50,9 @@ export function ActivitiesPanel({ moduleId }: { moduleId: string }) {
   return (
     <div>
       <div className="mb-3 flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-slate-700">Activities ({activities.length})</h3>
+        <h3 className="eyebrow">
+          Activities <span className="tnum text-ink-500">({activities.length})</span>
+        </h3>
         <div ref={menuRef} className="relative">
           <Button size="sm" variant="outline" leftIcon={<Icons.plus size={15} />} onClick={() => setMenuOpen((o) => !o)}>
             Add activity
@@ -61,7 +63,7 @@ export function ActivitiesPanel({ moduleId }: { moduleId: string }) {
                 initial={{ opacity: 0, y: -6 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -6 }}
-                className="absolute right-0 z-10 mt-1 w-44 overflow-hidden rounded-lg border border-slate-200 bg-white p-1 shadow-lg"
+                className="absolute right-0 z-10 mt-1.5 w-48 overflow-hidden rounded-xl border border-ink-200/70 bg-white p-1.5 shadow-pop"
               >
                 {ADD_OPTIONS.map((opt) => {
                   const Icon = Icons[opt.icon];
@@ -72,9 +74,9 @@ export function ActivitiesPanel({ moduleId }: { moduleId: string }) {
                         setMenuOpen(false);
                         modal.open(opt.type);
                       }}
-                      className="flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-left text-sm text-slate-600 hover:bg-slate-100"
+                      className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-[13.5px] font-semibold text-ink-600 transition-colors hover:bg-ink-100 hover:text-ink-900"
                     >
-                      <Icon size={16} /> {opt.label}
+                      <Icon size={16} className="text-ink-400" /> {opt.label}
                     </button>
                   );
                 })}
@@ -85,27 +87,27 @@ export function ActivitiesPanel({ moduleId }: { moduleId: string }) {
       </div>
 
       {loading ? (
-        <div className="flex justify-center py-8 text-slate-400">
+        <div className="flex justify-center py-8 text-ink-400">
           <Spinner />
         </div>
       ) : activities.length === 0 ? (
-        <p className="rounded-lg border border-dashed border-slate-200 py-6 text-center text-sm text-slate-400">
-          No activities yet. Add a lesson, exercise, quiz or exam.
+        <p className="rounded-xl border border-dashed border-ink-300/80 bg-white/60 py-7 text-center text-[13px] text-ink-400">
+          Nothing in this module yet — add a lesson, exercise, quiz or exam.
         </p>
       ) : (
         <ul className="space-y-2">
           {activities.map((a) => (
             <li
               key={a.id}
-              className="flex items-center gap-3 rounded-lg border border-slate-200 bg-white px-3 py-2.5"
+              className="flex items-center gap-3 rounded-xl border border-ink-200/80 bg-white px-3.5 py-3 shadow-card transition-colors hover:border-ink-300/80"
             >
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-slate-100 text-xs font-semibold text-slate-500">
+              <span className="tnum flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-ink-100 text-[11.5px] font-bold text-ink-500">
                 {a.order}
               </span>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium text-slate-800">{a.title}</p>
+                <p className="truncate text-[13.5px] font-semibold text-ink-800">{a.title}</p>
                 {a.questions && a.questions.length > 0 && (
-                  <p className="text-xs text-slate-400">
+                  <p className="mt-0.5 text-[11.5px] font-medium text-ink-400">
                     {a.questions.length} question{a.questions.length > 1 ? 's' : ''}
                     {a.passingScore != null && ` · pass ${a.passingScore}%`}
                     {a.durationMinutes != null && ` · ${a.durationMinutes} min`}
@@ -116,7 +118,7 @@ export function ActivitiesPanel({ moduleId }: { moduleId: string }) {
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-rose-500 hover:bg-rose-50"
+                className="h-9 w-9 text-rose-500 hover:bg-rose-50 hover:text-rose-600"
                 onClick={() => handleDelete(a)}
                 aria-label="Delete activity"
               >

@@ -9,13 +9,13 @@ import type { ActivityType, DifficultyLevel, EnrollmentStatus, TrainingStatus } 
 
 export function DifficultyBadge({ value }: { value: DifficultyLevel }) {
   const o = difficultyOption(value);
-  return <Badge className={o.badge}>{o.label}</Badge>;
+  return <Badge tone={o.tone}>{o.label}</Badge>;
 }
 
 export function TrainingStatusBadge({ value }: { value: TrainingStatus }) {
   const o = trainingStatusOption(value);
   return (
-    <Badge dot className={o.badge}>
+    <Badge dot tone={o.tone}>
       {o.label}
     </Badge>
   );
@@ -24,7 +24,7 @@ export function TrainingStatusBadge({ value }: { value: TrainingStatus }) {
 export function EnrollmentStatusBadge({ value }: { value: EnrollmentStatus }) {
   const o = enrollmentStatusOption(value);
   return (
-    <Badge dot className={o.badge}>
+    <Badge dot tone={o.tone}>
       {o.label}
     </Badge>
   );
@@ -32,5 +32,5 @@ export function EnrollmentStatusBadge({ value }: { value: EnrollmentStatus }) {
 
 export function ActivityTypeBadge({ value }: { value: ActivityType }) {
   const o = activityTypeOption(value);
-  return <Badge className={o.badge}>{o.label}</Badge>;
+  return <Badge tone={o.tone}>{o.label}</Badge>;
 }

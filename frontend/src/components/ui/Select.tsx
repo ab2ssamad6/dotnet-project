@@ -1,6 +1,7 @@
 import { forwardRef, useId, type SelectHTMLAttributes } from 'react';
 import { cn } from '@/utils/cn';
 import { Icons } from './Icon';
+import { fieldBase, fieldError, fieldHint, fieldLabel, fieldTone } from './field';
 
 export interface SelectOption {
   value: string | number;
@@ -24,9 +25,9 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
   return (
     <div className="w-full">
       {label && (
-        <label htmlFor={selectId} className="mb-1.5 block text-sm font-medium text-slate-700">
+        <label htmlFor={selectId} className={fieldLabel}>
           {label}
-          {props.required && <span className="ml-0.5 text-rose-500">*</span>}
+          {props.required && <span className="ml-0.5 text-brand-600">*</span>}
         </label>
       )}
       <div className="relative">
@@ -34,11 +35,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
           ref={ref}
           id={selectId}
           aria-invalid={!!error}
-          className={cn(
-            'focus-ring h-10 w-full appearance-none rounded-lg border bg-white pl-3 pr-9 text-sm text-slate-900 transition-colors disabled:bg-slate-50',
-            error ? 'border-rose-400 focus-visible:ring-rose-500' : 'border-slate-300 hover:border-slate-400',
-            className,
-          )}
+          className={cn(fieldBase, fieldTone(!!error), 'h-11 cursor-pointer appearance-none pl-3.5 pr-10', className)}
           {...props}
         >
           {placeholder && <option value="">{placeholder}</option>}
@@ -48,14 +45,16 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
             </option>
           ))}
         </select>
-        <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400">
-          <Icons.chevronDown size={18} />
+        <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-ink-400">
+          <Icons.chevronDown size={17} />
         </span>
       </div>
       {error ? (
-        <p className="mt-1 text-xs text-rose-600">{error}</p>
+        <p className={fieldError}>
+          <Icons.alert size={13} /> {error}
+        </p>
       ) : hint ? (
-        <p className="mt-1 text-xs text-slate-500">{hint}</p>
+        <p className={fieldHint}>{hint}</p>
       ) : null}
     </div>
   );

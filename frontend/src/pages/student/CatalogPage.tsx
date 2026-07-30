@@ -33,7 +33,7 @@ export function CatalogPage() {
     setEnrollingId(t.id);
     try {
       await enrollmentService.enroll(t.id);
-      notify.success(`Enrolled in "${t.title}".`);
+      notify.success(`You're in — "${t.title}" is now in My Learning.`);
       push({ title: 'Enrolled', message: `You enrolled in "${t.title}".`, type: 'success' });
       await enrollments.refetch();
     } catch (err) {
@@ -45,10 +45,19 @@ export function CatalogPage() {
 
   return (
     <div>
-      <PageHeader title="Training Catalog" description="Browse published trainings and enroll." />
+      <PageHeader
+        eyebrow="Discover"
+        title="Training catalog"
+        description="Every published course, ready when you are. Enroll and it lands in My Learning."
+      />
 
-      <div className="mb-5 max-w-sm">
-        <SearchInput value={list.search} onSearch={list.setSearch} placeholder="Search catalog…" />
+      <div className="surface mb-5 p-3">
+        <SearchInput
+          value={list.search}
+          onSearch={list.setSearch}
+          placeholder="Search the catalog…"
+          className="max-w-sm"
+        />
       </div>
 
       {list.error ? (
@@ -60,7 +69,13 @@ export function CatalogPage() {
           ))}
         </div>
       ) : list.items.length === 0 ? (
-        <EmptyState icon={<Icons.grid size={26} />} title="No trainings available" description="Check back later for new courses." />
+        <div className="surface">
+          <EmptyState
+            icon={<Icons.grid size={24} />}
+            title="The catalog is empty for now"
+            description="No published trainings match your search. Try another term, or check back soon."
+          />
+        </div>
       ) : (
         <>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -69,42 +84,63 @@ export function CatalogPage() {
               return (
                 <div
                   key={t.id}
-                  className="flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-card transition-shadow hover:shadow-md"
+                  className="surface group flex flex-col overflow-hidden transition-all duration-200 hover:-translate-y-0.5 hover:border-ink-300/80 hover:shadow-raised"
                 >
-                  <div className="relative h-32 bg-slate-100">
+                  <div className="relative h-36 bg-ink-100">
                     {t.thumbnail ? (
-                      <img src={t.thumbnail} alt={t.title} className="h-full w-full object-cover" />
+                      <img
+                        src={t.thumbnail}
+                        alt=""
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                      />
                     ) : (
-                      <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-brand-500 to-brand-700 text-white">
-                        <Icons.training size={34} />
+                      <div className="relative flex h-full w-full items-center justify-center bg-brand-gradient text-white/90">
+                        <span className="absolute inset-0 bg-grain opacity-[0.08] mix-blend-overlay" aria-hidden />
+                        <Icons.training size={32} />
                       </div>
                     )}
+                    <span
+                      className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-ink-950/50 to-transparent"
+                      aria-hidden
+                    />
+                    <span className="absolute bottom-3 left-3 text-[11px] font-bold uppercase tracking-[0.12em] text-white/85">
+                      {t.categoryName ?? 'General'}
+                    </span>
                     {enrolled && (
-                      <div className="absolute right-3 top-3">
-                        <Badge className="bg-emerald-500 text-white">
-                          <Icons.check size={12} /> Enrolled
+                      <span className="absolute right-3 top-3">
+                        <Badge className="bg-green-600 text-white ring-green-700/30">
+                          <Icons.check size={11} /> Enrolled
                         </Badge>
-                      </div>
+                      </span>
                     )}
                   </div>
                   <div className="flex flex-1 flex-col p-4">
-                    <div className="mb-2 flex items-center gap-2">
+                    <div className="mb-2.5 flex flex-wrap items-center gap-2">
                       <DifficultyBadge value={t.difficulty} />
-                      <Badge className="bg-slate-100 text-slate-600">{t.categoryName ?? 'General'}</Badge>
+                      <Badge tone="neutral">
+                        <Icons.clock size={11} /> {formatDuration(t.duration)}
+                      </Badge>
                     </div>
-                    <h3 className="line-clamp-1 font-semibold text-slate-900">{t.title}</h3>
-                    <p className="mt-1 line-clamp-2 flex-1 text-sm text-slate-500">{t.description}</p>
-                    <div className="mt-3 flex items-center gap-4 text-xs text-slate-400">
-                      <span className="inline-flex items-center gap-1">
-                        <Icons.clock size={14} /> {formatDuration(t.duration)}
+                    <h3 className="line-clamp-1 text-[15px] font-bold tracking-[-0.01em] text-ink-900">{t.title}</h3>
+                    <p className="mt-1.5 line-clamp-2 flex-1 text-[13px] leading-relaxed text-ink-500">
+                      {t.description}
+                    </p>
+                    <div className="mt-3.5 flex items-center gap-4 text-[11.5px] font-medium text-ink-400">
+                      <span className="inline-flex items-center gap-1.5">
+                        <Icons.layers size={13} /> {t.moduleCount} modules
                       </span>
-                      <span className="inline-flex items-center gap-1">
-                        <Icons.layers size={14} /> {t.moduleCount} modules
+                      <span className="inline-flex min-w-0 items-center gap-1.5">
+                        <Icons.trainer size={13} /> <span className="truncate">{t.trainerName ?? 'Your trainer'}</span>
                       </span>
                     </div>
-                    <div className="mt-4 border-t border-slate-100 pt-3">
+                    <div className="mt-4 border-t border-ink-100 pt-3.5">
                       {enrolled ? (
-                        <Button variant="outline" fullWidth onClick={() => navigate(`/my-learning/${t.id}`)}>
+                        <Button
+                          variant="outline"
+                          fullWidth
+                          rightIcon={<Icons.arrowRight size={15} />}
+                          onClick={() => navigate(`/my-learning/${t.id}`)}
+                        >
                           Continue learning
                         </Button>
                       ) : (
@@ -118,8 +154,9 @@ export function CatalogPage() {
               );
             })}
           </div>
-          <div className="mt-4 rounded-xl border border-slate-200 bg-white">
+          <div className="surface mt-5">
             <Pagination
+              bare
               page={list.page}
               totalPages={list.totalPages}
               totalCount={list.totalCount}

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui';
+import { Button, Icons } from '@/components/ui';
+import { Logo } from '@/components/common/Logo';
 
 function ErrorTemplate({
   code,
@@ -11,16 +12,21 @@ function ErrorTemplate({
   description: string;
 }) {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 px-6 text-center">
-      <p className="text-7xl font-black tracking-tight text-brand-600">{code}</p>
-      <h1 className="mt-4 text-2xl font-bold text-slate-900">{title}</h1>
-      <p className="mt-2 max-w-md text-sm text-slate-500">{description}</p>
-      <div className="mt-8 flex gap-3">
+    <div className="canvas-glow flex min-h-screen flex-col items-center justify-center bg-canvas px-6 text-center">
+      <div className="mb-10">
+        <Logo />
+      </div>
+      <p className="font-display text-[88px] font-semibold leading-none tracking-[-0.04em] text-brand-700/90">
+        {code}
+      </p>
+      <h1 className="mt-5 font-display text-[26px] font-semibold tracking-[-0.02em] text-ink-900">{title}</h1>
+      <p className="mt-3 max-w-md text-sm leading-relaxed text-ink-500">{description}</p>
+      <div className="mt-8 flex flex-wrap justify-center gap-3">
         <Link to="/dashboard">
-          <Button>Back to dashboard</Button>
+          <Button rightIcon={<Icons.arrowRight size={16} />}>Back to dashboard</Button>
         </Link>
         <Link to="/login">
-          <Button variant="outline">Sign in</Button>
+          <Button variant="outline">Sign in again</Button>
         </Link>
       </div>
     </div>
@@ -31,8 +37,8 @@ export function NotFoundPage() {
   return (
     <ErrorTemplate
       code="404"
-      title="Page not found"
-      description="The page you're looking for doesn't exist or may have been moved."
+      title="We can't find that page"
+      description="The link may be outdated, or the page has been moved somewhere else in the workspace."
     />
   );
 }
@@ -41,8 +47,8 @@ export function ForbiddenPage() {
   return (
     <ErrorTemplate
       code="403"
-      title="Access denied"
-      description="You don't have permission to view this page. Contact an administrator if you believe this is an error."
+      title="You don't have access here"
+      description="This area is limited to another role. Ask an administrator to grant you access if you think that's a mistake."
     />
   );
 }

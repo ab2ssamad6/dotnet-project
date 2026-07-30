@@ -37,6 +37,7 @@ export function ConfirmProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const value = useMemo(() => confirm, [confirm]);
+  const destructive = (options?.variant ?? 'danger') === 'danger';
 
   return (
     <ConfirmContext.Provider value={value}>
@@ -64,13 +65,17 @@ export function ConfirmProvider({ children }: { children: ReactNode }) {
           </>
         }
       >
-        <div className="flex gap-4">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-rose-100 text-rose-600">
-            <Icons.alert size={22} />
+        <div className="flex gap-4 pt-1">
+          <div
+            className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ring-1 ring-inset ${
+              destructive ? 'bg-rose-50 text-rose-600 ring-rose-200/70' : 'bg-brand-50 text-brand-700 ring-brand-200/70'
+            }`}
+          >
+            <Icons.alert size={21} />
           </div>
           <div>
-            <h2 className="text-base font-semibold text-slate-900">{options?.title}</h2>
-            <div className="mt-1 text-sm text-slate-600">{options?.message}</div>
+            <h2 className="font-display text-[17px] font-semibold text-ink-900">{options?.title}</h2>
+            <div className="mt-1.5 text-sm leading-relaxed text-ink-600">{options?.message}</div>
           </div>
         </div>
       </Modal>

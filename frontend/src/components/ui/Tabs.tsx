@@ -8,6 +8,7 @@ export interface TabItem {
   count?: number;
 }
 
+/** Segmented pill switcher — reads as a control rather than a page divider. */
 export function Tabs({
   tabs,
   active,
@@ -20,32 +21,41 @@ export function Tabs({
   className?: string;
 }) {
   return (
-    <div className={cn('flex gap-1 overflow-x-auto border-b border-slate-200', className)}>
-      {tabs.map((tab) => (
-        <button
-          key={tab.id}
-          onClick={() => onChange(tab.id)}
-          className={cn(
-            'inline-flex items-center gap-2 whitespace-nowrap border-b-2 px-4 py-2.5 text-sm font-medium transition-colors',
-            active === tab.id
-              ? 'border-brand-600 text-brand-700'
-              : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700',
-          )}
-        >
-          {tab.icon}
-          {tab.label}
-          {tab.count !== undefined && (
-            <span
-              className={cn(
-                'rounded-full px-1.5 py-0.5 text-xs',
-                active === tab.id ? 'bg-brand-100 text-brand-700' : 'bg-slate-100 text-slate-500',
-              )}
-            >
-              {tab.count}
-            </span>
-          )}
-        </button>
-      ))}
+    <div
+      role="tablist"
+      className={cn(
+        'inline-flex max-w-full gap-1 overflow-x-auto rounded-xl border border-ink-200/80 bg-white p-1 shadow-card',
+        className,
+      )}
+    >
+      {tabs.map((tab) => {
+        const isActive = active === tab.id;
+        return (
+          <button
+            key={tab.id}
+            role="tab"
+            aria-selected={isActive}
+            onClick={() => onChange(tab.id)}
+            className={cn(
+              'focus-ring inline-flex items-center gap-2 whitespace-nowrap rounded-lg px-3.5 py-2 text-[13px] font-semibold transition-colors',
+              isActive ? 'bg-ink-900 text-white shadow-sm' : 'text-ink-500 hover:bg-ink-100 hover:text-ink-800',
+            )}
+          >
+            {tab.icon}
+            {tab.label}
+            {tab.count !== undefined && (
+              <span
+                className={cn(
+                  'tnum rounded-full px-1.5 py-0.5 text-[11px] font-bold',
+                  isActive ? 'bg-white/15 text-white' : 'bg-ink-100 text-ink-500',
+                )}
+              >
+                {tab.count}
+              </span>
+            )}
+          </button>
+        );
+      })}
     </div>
   );
 }

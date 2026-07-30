@@ -30,13 +30,26 @@ export function SearchInput({
 
   return (
     <div className={className}>
-      <Input
-        value={local}
-        onChange={(e) => setLocal(e.target.value)}
-        placeholder={placeholder}
-        leftIcon={<Icons.search size={18} />}
-        aria-label="Search"
-      />
+      <div className="relative">
+        <Input
+          value={local}
+          onChange={(e) => setLocal(e.target.value)}
+          placeholder={placeholder}
+          leftIcon={<Icons.search size={17} />}
+          aria-label="Search"
+          className={local ? 'pr-10' : undefined}
+        />
+        {local && (
+          <button
+            type="button"
+            onClick={() => setLocal('')}
+            className="focus-ring absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-1.5 text-ink-400 transition-colors hover:bg-ink-100 hover:text-ink-700"
+            aria-label="Clear search"
+          >
+            <Icons.close size={15} />
+          </button>
+        )}
+      </div>
     </div>
   );
 }

@@ -162,23 +162,29 @@ export function AITrainerPanel({ moduleId, trainingId, subjectLabel, personaName
   const isConnecting = status === 'connecting';
 
   return (
-    <Card className={cn(compact && 'border-violet-200')}>
-      <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
-        <div className="flex items-center gap-2.5">
-          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-violet-100 text-violet-600">
-            <Icons.ai size={20} />
+    <Card className={cn('overflow-hidden', compact && 'border-violet-200/80')}>
+      <div className="flex items-center justify-between gap-3 border-b border-ink-100 bg-violet-50/40 px-4 py-3.5">
+        <div className="flex min-w-0 items-center gap-3">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-violet-100 text-violet-700 ring-1 ring-inset ring-violet-200/70">
+            <Icons.ai size={19} />
           </span>
-          <div>
-            <p className="text-sm font-semibold text-slate-800">
+          <div className="min-w-0">
+            <p className="truncate text-sm font-bold text-ink-900">
               AI Trainer
-              {subject && <span className="font-normal text-slate-500"> · {subject}</span>}
+              {subject && <span className="font-medium text-ink-500"> · {subject}</span>}
             </p>
             <StatusPill status={status} />
           </div>
         </div>
         <div className="flex items-center gap-2">
           {compact && (
-            <Button variant="ghost" size="icon" onClick={() => setCollapsed((c) => !c)} aria-label="Toggle panel">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-9 w-9"
+              onClick={() => setCollapsed((c) => !c)}
+              aria-label={collapsed ? 'Expand AI trainer' : 'Collapse AI trainer'}
+            >
               <Icons.chevronDown size={18} className={cn('transition-transform', !collapsed && 'rotate-180')} />
             </Button>
           )}
@@ -187,30 +193,38 @@ export function AITrainerPanel({ moduleId, trainingId, subjectLabel, personaName
 
       {!collapsed && (
         <CardBody className="space-y-4">
-          <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-slate-900">
+          <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-shell ring-1 ring-inset ring-ink-900/10">
             {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
             <video id={videoId} autoPlay playsInline className="h-full w-full object-cover" />
             {status !== 'live' && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-slate-900 text-center text-slate-300">
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3.5 bg-shell text-center text-white/70">
+                <span
+                  className="pointer-events-none absolute inset-0"
+                  style={{
+                    background:
+                      'radial-gradient(22rem 12rem at 50% 30%, rgb(139 92 246 / 0.20), transparent 70%)',
+                  }}
+                  aria-hidden
+                />
                 {isConnecting ? (
                   <>
-                    <Spinner size={28} />
-                    <p className="text-sm">Connecting to your AI trainer…</p>
+                    <Spinner size={26} />
+                    <p className="relative text-[13px] font-semibold">Connecting to your AI trainer…</p>
                   </>
                 ) : status === 'error' ? (
                   <>
-                    <Icons.alert size={30} className="text-rose-400" />
-                    <p className="max-w-xs px-4 text-sm">{error}</p>
+                    <Icons.alert size={28} className="relative text-rose-400" />
+                    <p className="relative max-w-xs px-6 text-[13px] leading-relaxed">{error}</p>
                   </>
                 ) : (
                   <>
-                    <span className="flex h-14 w-14 items-center justify-center rounded-full bg-white/10">
-                      <Icons.ai size={30} />
+                    <span className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 text-white ring-1 ring-inset ring-white/15">
+                      <Icons.ai size={28} />
                     </span>
-                    <p className="max-w-xs px-4 text-sm">
+                    <p className="relative max-w-xs px-6 text-[13px] leading-relaxed">
                       {subject
-                        ? `Start a session to be tutored on ${subject}.`
-                        : 'Start a session to chat with your AI trainer.'}
+                        ? `Start a session and the avatar will tutor you on ${subject}.`
+                        : 'Start a session to talk with your AI trainer.'}
                     </p>
                   </>
                 )}
@@ -218,8 +232,8 @@ export function AITrainerPanel({ moduleId, trainingId, subjectLabel, personaName
             )}
             {isLive && (
               <div className="absolute left-3 top-3">
-                <Badge className="bg-rose-500 text-white">
-                  <span className="mr-0.5 h-1.5 w-1.5 animate-pulse rounded-full bg-white" /> LIVE
+                <Badge className="bg-rose-500 text-white ring-rose-600/30">
+                  <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white" /> LIVE
                 </Badge>
               </div>
             )}
@@ -261,13 +275,15 @@ export function AITrainerPanel({ moduleId, trainingId, subjectLabel, personaName
           </div>
 
           {transcript.length > 0 && (
-            <div className="max-h-56 space-y-2 overflow-y-auto rounded-lg border border-slate-100 bg-slate-50 p-3">
+            <div className="max-h-60 space-y-2.5 overflow-y-auto rounded-xl border border-ink-200/70 bg-ink-50/70 p-3.5">
               {transcript.map((line) => (
                 <div key={line.id} className={cn('flex', line.role === 'user' ? 'justify-end' : 'justify-start')}>
                   <span
                     className={cn(
-                      'max-w-[80%] rounded-2xl px-3 py-2 text-sm',
-                      line.role === 'user' ? 'bg-brand-600 text-white' : 'bg-white text-slate-700 shadow-sm',
+                      'max-w-[82%] rounded-2xl px-3.5 py-2.5 text-[13.5px] leading-relaxed',
+                      line.role === 'user'
+                        ? 'bg-brand-700 text-white'
+                        : 'border border-ink-200/70 bg-white text-ink-700 shadow-card',
                     )}
                   >
                     {line.text}
@@ -287,7 +303,7 @@ export function AITrainerPanel({ moduleId, trainingId, subjectLabel, personaName
             <Input
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
-              placeholder={isLive ? 'Ask the AI trainer a question…' : 'Start a session to ask questions'}
+              placeholder={isLive ? 'Ask anything about this material…' : 'Start a session to ask questions'}
               disabled={!isLive || asking}
               className="flex-1"
             />
@@ -303,15 +319,15 @@ export function AITrainerPanel({ moduleId, trainingId, subjectLabel, personaName
 
 function StatusPill({ status }: { status: Status }) {
   const map: Record<Status, { label: string; cls: string }> = {
-    idle: { label: 'Ready', cls: 'text-slate-400' },
-    connecting: { label: 'Connecting…', cls: 'text-amber-500' },
-    live: { label: 'Live', cls: 'text-emerald-500' },
-    error: { label: 'Error', cls: 'text-rose-500' },
+    idle: { label: 'Ready when you are', cls: 'text-ink-400' },
+    connecting: { label: 'Connecting…', cls: 'text-amber-600' },
+    live: { label: 'Live session', cls: 'text-green-600' },
+    error: { label: 'Connection failed', cls: 'text-rose-600' },
   };
   const s = map[status];
   return (
-    <span className={cn('flex items-center gap-1 text-xs font-medium', s.cls)}>
-      <span className="h-1.5 w-1.5 rounded-full bg-current" />
+    <span className={cn('mt-0.5 flex items-center gap-1.5 text-[11.5px] font-semibold', s.cls)}>
+      <span className={cn('h-1.5 w-1.5 rounded-full bg-current', status === 'live' && 'animate-pulse')} />
       {s.label}
     </span>
   );

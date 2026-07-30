@@ -50,7 +50,7 @@ export function TrainingsPage() {
         categoryId: t.categoryId,
         trainerId: t.trainerId,
       });
-      notify.success(t.published ? 'Training unpublished.' : 'Training published.');
+      notify.success(t.published ? 'Training moved back to draft.' : 'Training is live in the catalog.');
       list.refetch();
     } catch (err) {
       notify.apiError(err);
@@ -59,14 +59,14 @@ export function TrainingsPage() {
 
   const handleDelete = async (t: TrainingDto) => {
     const ok = await confirm({
-      title: 'Delete training',
+      title: 'Delete this training?',
       message: (
         <>
-          Delete <span className="font-medium">"{t.title}"</span> and all its modules and activities? This cannot be
-          undone.
+          <span className="font-semibold text-ink-800">"{t.title}"</span> and every module and activity inside it will
+          be removed. This can't be undone.
         </>
       ),
-      confirmLabel: 'Delete',
+      confirmLabel: 'Delete training',
     });
     if (!ok) return;
     try {
@@ -81,37 +81,41 @@ export function TrainingsPage() {
   return (
     <div>
       <PageHeader
+        eyebrow="Curriculum"
         title="Trainings"
-        description="Create and manage training courses."
+        description="Author courses, structure them into modules, and publish when they're ready for learners."
         actions={
-          <Button leftIcon={<Icons.plus size={18} />} onClick={() => modal.open()}>
+          <Button leftIcon={<Icons.plus size={17} />} onClick={() => modal.open()}>
             New training
           </Button>
         }
       />
 
-      <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center">
+      <div className="surface mb-5 flex flex-col gap-3 p-3 sm:flex-row sm:items-center">
         <SearchInput
           value={list.search}
           onSearch={list.setSearch}
-          placeholder="Search trainings…"
+          placeholder="Search by title…"
           className="sm:max-w-xs sm:flex-1"
         />
-        <div className="flex gap-3">
+        <div className="flex flex-1 items-center gap-3">
           <Select
-            className="min-w-[140px]"
+            className="min-w-[150px]"
             placeholder="All statuses"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
             options={TRAINING_STATUS_OPTIONS.map((o) => ({ value: o.value, label: o.label }))}
           />
           <Select
-            className="min-w-[140px]"
+            className="min-w-[150px]"
             placeholder="All levels"
             value={difficultyFilter}
             onChange={(e) => setDifficultyFilter(e.target.value)}
             options={DIFFICULTY_OPTIONS.map((o) => ({ value: o.value, label: o.label }))}
           />
+          <p className="tnum ml-auto hidden shrink-0 pr-1 text-[12.5px] font-semibold text-ink-400 lg:block">
+            {filtered.length} shown
+          </p>
         </div>
       </div>
 
@@ -124,12 +128,14 @@ export function TrainingsPage() {
           ))}
         </div>
       ) : filtered.length === 0 ? (
-        <EmptyState
-          icon={<Icons.training size={26} />}
-          title="No trainings found"
-          description="Adjust filters or create a new training."
-          action={<Button onClick={() => modal.open()}>New training</Button>}
-        />
+        <div className="surface">
+          <EmptyState
+            icon={<Icons.training size={24} />}
+            title="No trainings match this view"
+            description="Clear the filters above, or start a new course from scratch."
+            action={<Button onClick={() => modal.open()}>New training</Button>}
+          />
+        </div>
       ) : (
         <>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -144,8 +150,9 @@ export function TrainingsPage() {
               />
             ))}
           </div>
-          <div className="mt-4 rounded-xl border border-slate-200 bg-white">
+          <div className="surface mt-5">
             <Pagination
+              bare
               page={list.page}
               totalPages={list.totalPages}
               totalCount={list.totalCount}

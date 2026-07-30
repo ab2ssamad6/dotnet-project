@@ -70,14 +70,14 @@ export function CategoriesPage() {
 
   const handleDelete = async (category: CategoryDto) => {
     const ok = await confirm({
-      title: 'Delete category',
+      title: 'Delete this category?',
       message: (
         <>
-          Delete <span className="font-medium">"{category.name}"</span>? Trainings referencing it may be affected. This
-          action cannot be undone.
+          <span className="font-semibold text-ink-800">"{category.name}"</span> will be removed, and trainings that
+          reference it may be affected. This can't be undone.
         </>
       ),
-      confirmLabel: 'Delete',
+      confirmLabel: 'Delete category',
     });
     if (!ok) return;
     try {
@@ -96,10 +96,10 @@ export function CategoriesPage() {
       sortable: true,
       render: (c) => (
         <div className="flex items-center gap-3">
-          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
-            <Icons.category size={18} />
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-700 ring-1 ring-inset ring-brand-200/60">
+            <Icons.category size={17} />
           </span>
-          <span className="font-medium text-slate-800">{c.name}</span>
+          <span className="font-bold text-ink-800">{c.name}</span>
         </div>
       ),
     },
@@ -107,14 +107,14 @@ export function CategoriesPage() {
       key: 'description',
       header: 'Description',
       hideOnMobile: true,
-      render: (c) => <span className="line-clamp-1 text-slate-500">{c.description || '—'}</span>,
+      render: (c) => <span className="line-clamp-1 text-[13px] text-ink-500">{c.description || '—'}</span>,
     },
     {
       key: 'createdAt',
       header: 'Created',
       sortable: true,
       hideOnMobile: true,
-      render: (c) => <span className="text-slate-500">{formatDate(c.createdAt)}</span>,
+      render: (c) => <span className="tnum text-[13px] text-ink-500">{formatDate(c.createdAt)}</span>,
     },
     {
       key: 'actions',
@@ -122,16 +122,16 @@ export function CategoriesPage() {
       className: 'text-right',
       render: (c) => (
         <div className="flex justify-end gap-1" onClick={(e) => e.stopPropagation()}>
-          <Button variant="ghost" size="icon" onClick={() => openEdit(c)} aria-label="Edit">
+          <Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => openEdit(c)} aria-label="Edit category">
             <Icons.edit size={17} />
           </Button>
           {isAdmin && (
             <Button
               variant="ghost"
               size="icon"
-              className="text-rose-500 hover:bg-rose-50"
+              className="h-9 w-9 text-rose-500 hover:bg-rose-50 hover:text-rose-600"
               onClick={() => handleDelete(c)}
-              aria-label="Delete"
+              aria-label="Delete category"
             >
               <Icons.trash size={17} />
             </Button>
@@ -144,17 +144,23 @@ export function CategoriesPage() {
   return (
     <div>
       <PageHeader
+        eyebrow="Curriculum"
         title="Categories"
-        description="Organize trainings into categories."
+        description="Group your trainings so learners can find the right track quickly."
         actions={
-          <Button leftIcon={<Icons.plus size={18} />} onClick={openCreate}>
+          <Button leftIcon={<Icons.plus size={17} />} onClick={openCreate}>
             New category
           </Button>
         }
       />
 
-      <div className="mb-4 max-w-sm">
-        <SearchInput value={list.search} onSearch={list.setSearch} placeholder="Search categories…" />
+      <div className="surface mb-5 p-3">
+        <SearchInput
+          value={list.search}
+          onSearch={list.setSearch}
+          placeholder="Search categories…"
+          className="max-w-sm"
+        />
       </div>
 
       {list.error ? (
@@ -168,7 +174,7 @@ export function CategoriesPage() {
           sort={list.sort}
           onSortChange={list.setSort}
           emptyTitle="No categories yet"
-          emptyDescription="Create your first category to group trainings."
+          emptyDescription="Create your first category to give the catalog some structure."
           emptyAction={<Button onClick={openCreate}>New category</Button>}
           pagination={{
             page: list.page,
@@ -184,6 +190,7 @@ export function CategoriesPage() {
         open={modal.isOpen}
         onClose={modal.close}
         title={modal.payload ? 'Edit category' : 'New category'}
+        description="Categories are how learners filter the catalog."
         closeOnBackdrop={!isSubmitting}
         footer={
           <>
@@ -200,7 +207,7 @@ export function CategoriesPage() {
           <Input label="Name" placeholder="e.g. Web Development" error={errors.name?.message} required {...register('name')} />
           <Textarea
             label="Description"
-            placeholder="What kind of trainings belong here?"
+            placeholder="What kind of trainings belong in here?"
             error={errors.description?.message}
             {...register('description')}
           />

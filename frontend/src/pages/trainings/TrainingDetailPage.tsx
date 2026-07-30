@@ -53,13 +53,14 @@ export function TrainingDetailPage() {
 
   const handleDeleteModule = async (module: ModuleDto) => {
     const ok = await confirm({
-      title: 'Delete module',
+      title: 'Delete this module?',
       message: (
         <>
-          Delete <span className="font-medium">"{module.title}"</span> and all its activities?
+          <span className="font-semibold text-ink-800">"{module.title}"</span> and all of its activities will be
+          removed from the curriculum.
         </>
       ),
-      confirmLabel: 'Delete',
+      confirmLabel: 'Delete module',
     });
     if (!ok) return;
     try {
@@ -81,149 +82,174 @@ export function TrainingDetailPage() {
     <div>
       <Breadcrumbs items={[{ label: 'Trainings', to: '/trainings' }, { label: t.title }]} />
 
-      <Card className="mb-6 overflow-hidden">
-        <div className="relative h-36 bg-gradient-to-br from-brand-600 to-brand-800">
-          {t.thumbnail && <img src={t.thumbnail} alt="" className="h-full w-full object-cover opacity-60" />}
-          <div className="absolute inset-0 flex items-end justify-between p-5">
-            <div className="flex items-center gap-2">
+      <Card className="mb-7 overflow-hidden">
+        <div className="relative h-44 bg-brand-gradient">
+          {t.thumbnail ? (
+            <img src={t.thumbnail} alt="" className="h-full w-full object-cover opacity-45" />
+          ) : (
+            <span className="absolute inset-0 bg-grain opacity-[0.07] mix-blend-overlay" aria-hidden />
+          )}
+          <span
+            className="absolute inset-0"
+            style={{ background: 'radial-gradient(28rem 14rem at 10% 0%, rgb(255 255 255 / 0.16), transparent 70%)' }}
+            aria-hidden
+          />
+          <div className="absolute inset-0 flex items-start justify-between gap-3 p-5">
+            <div className="flex flex-wrap items-center gap-2">
               <TrainingStatusBadge value={t.status} />
               <DifficultyBadge value={t.difficulty} />
             </div>
-            <div className="flex gap-2">
+            <div className="flex shrink-0 gap-2">
               <Button
-                variant="secondary"
+                variant="outline"
                 size="sm"
-                leftIcon={<Icons.ai size={15} />}
+                leftIcon={<Icons.sparkle size={15} />}
                 onClick={() => navigate(`/ai-trainer?trainingId=${id}`)}
               >
                 Train with AI
               </Button>
-              <Button variant="secondary" size="sm" leftIcon={<Icons.edit size={15} />} onClick={() => navigate('/trainings')}>
-                Back
+              <Button
+                variant="outline"
+                size="sm"
+                leftIcon={<Icons.chevronLeft size={15} />}
+                onClick={() => navigate('/trainings')}
+              >
+                All trainings
               </Button>
             </div>
           </div>
         </div>
-        <CardBody>
-          <h1 className="text-xl font-bold text-slate-900">{t.title}</h1>
-          <p className="mt-1 text-sm text-slate-500">{t.description}</p>
-          <div className="mt-4 flex flex-wrap gap-4 text-sm text-slate-500">
-            <span className="inline-flex items-center gap-1.5">
-              <Icons.category size={16} /> {t.categoryName ?? 'Uncategorized'}
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <Icons.trainer size={16} /> {t.trainerName ?? '—'}
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <Icons.clock size={16} /> {formatDuration(t.duration)}
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <Icons.layers size={16} /> {ordered.length} modules
-            </span>
+        <CardBody className="p-6">
+          <h1 className="font-display text-[26px] font-semibold leading-tight tracking-[-0.02em] text-ink-900">
+            {t.title}
+          </h1>
+          <p className="mt-2.5 max-w-3xl text-sm leading-relaxed text-ink-500">{t.description}</p>
+          <div className="mt-5 flex flex-wrap gap-x-6 gap-y-2.5 border-t border-ink-100 pt-4 text-[13px] font-medium text-ink-600">
+            <Meta icon={<Icons.category size={15} />} label={t.categoryName ?? 'Uncategorized'} />
+            <Meta icon={<Icons.trainer size={15} />} label={t.trainerName ?? 'Unassigned'} />
+            <Meta icon={<Icons.clock size={15} />} label={formatDuration(t.duration)} />
+            <Meta icon={<Icons.layers size={15} />} label={`${ordered.length} modules`} />
           </div>
         </CardBody>
       </Card>
 
-      <div className="mb-3 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-slate-900">Modules</h2>
-        <Button leftIcon={<Icons.plus size={18} />} onClick={() => moduleModal.open()}>
+      <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <p className="eyebrow">Curriculum</p>
+          <h2 className="mt-1.5 font-display text-[21px] font-semibold tracking-[-0.02em] text-ink-900">Modules</h2>
+        </div>
+        <Button leftIcon={<Icons.plus size={17} />} onClick={() => moduleModal.open()}>
           Add module
         </Button>
       </div>
 
       {modules.loading ? (
-        <div className="flex justify-center py-10 text-slate-400">
+        <div className="flex justify-center py-12 text-ink-400">
           <Spinner />
         </div>
       ) : ordered.length === 0 ? (
         <Card>
-          <CardBody className="py-10 text-center">
-            <Icons.layers size={30} className="mx-auto mb-2 text-slate-300" />
-            <p className="text-sm text-slate-500">No modules yet. Add the first module to build your curriculum.</p>
-            <Button className="mt-4" onClick={() => moduleModal.open()}>
-              Add module
+          <CardBody className="py-14 text-center">
+            <span className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-ink-200/70 bg-white text-brand-600 shadow-card">
+              <Icons.layers size={24} />
+            </span>
+            <h3 className="text-base font-bold text-ink-900">Start building the curriculum</h3>
+            <p className="mx-auto mt-1.5 max-w-sm text-sm leading-relaxed text-ink-500">
+              Modules hold the lessons, exercises and assessments learners work through in order.
+            </p>
+            <Button className="mt-6" leftIcon={<Icons.plus size={17} />} onClick={() => moduleModal.open()}>
+              Add the first module
             </Button>
           </CardBody>
         </Card>
       ) : (
         <div className="space-y-3">
-          {ordered.map((m, i) => (
-            <Card key={m.id}>
-              <div className="flex items-center gap-3 px-4 py-3">
-                <div className="flex flex-col">
+          {ordered.map((m, i) => {
+            const isOpen = expanded === m.id;
+            return (
+              <Card key={m.id} className={isOpen ? 'border-brand-200 shadow-raised' : undefined}>
+                <div className="flex items-center gap-3 px-4 py-3.5">
+                  <div className="flex flex-col text-ink-300">
+                    <button
+                      onClick={() => reorder(m, -1)}
+                      disabled={i === 0}
+                      className="focus-ring rounded transition-colors hover:text-ink-600 disabled:opacity-30"
+                      aria-label="Move module up"
+                    >
+                      <Icons.arrowUp size={13} />
+                    </button>
+                    <button
+                      onClick={() => reorder(m, 1)}
+                      disabled={i === ordered.length - 1}
+                      className="focus-ring rounded transition-colors hover:text-ink-600 disabled:opacity-30"
+                      aria-label="Move module down"
+                    >
+                      <Icons.arrowDown size={13} />
+                    </button>
+                  </div>
+                  <span className="tnum flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-[13px] font-bold text-brand-700 ring-1 ring-inset ring-brand-200/60">
+                    {m.order}
+                  </span>
                   <button
-                    onClick={() => reorder(m, -1)}
-                    disabled={i === 0}
-                    className="text-slate-300 hover:text-slate-600 disabled:opacity-30"
-                    aria-label="Move up"
+                    className="focus-ring min-w-0 flex-1 rounded text-left"
+                    onClick={() => setExpanded(isOpen ? null : m.id)}
                   >
-                    <Icons.arrowUp size={14} />
+                    <div className="flex items-center gap-2">
+                      <p className="truncate text-sm font-bold text-ink-800">{m.title}</p>
+                      {m.aiAvatarEnabled && (
+                        <Badge tone="ai">
+                          <Icons.sparkle size={11} /> AI
+                        </Badge>
+                      )}
+                    </div>
+                    <p className="mt-0.5 truncate text-[11.5px] font-medium text-ink-400">
+                      {formatDuration(m.duration)}
+                      {m.description ? ` · ${m.description}` : ''}
+                    </p>
                   </button>
-                  <button
-                    onClick={() => reorder(m, 1)}
-                    disabled={i === ordered.length - 1}
-                    className="text-slate-300 hover:text-slate-600 disabled:opacity-30"
-                    aria-label="Move down"
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-9 w-9"
+                    onClick={() => moduleModal.open(m)}
+                    aria-label="Edit module"
                   >
-                    <Icons.arrowDown size={14} />
+                    <Icons.edit size={16} />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-9 w-9 text-rose-500 hover:bg-rose-50 hover:text-rose-600"
+                    onClick={() => handleDeleteModule(m)}
+                    aria-label="Delete module"
+                  >
+                    <Icons.trash size={16} />
+                  </Button>
+                  <button
+                    onClick={() => setExpanded(isOpen ? null : m.id)}
+                    className="focus-ring rounded-lg p-1.5 text-ink-400 transition-colors hover:bg-ink-100 hover:text-ink-700"
+                    aria-label={isOpen ? 'Hide activities' : 'Show activities'}
+                  >
+                    <Icons.chevronDown size={17} className={`transition-transform ${isOpen ? 'rotate-180' : ''}`} />
                   </button>
                 </div>
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-sm font-semibold text-brand-600">
-                  {m.order}
-                </span>
-                <button className="min-w-0 flex-1 text-left" onClick={() => setExpanded(expanded === m.id ? null : m.id)}>
-                  <div className="flex items-center gap-2">
-                    <p className="truncate font-medium text-slate-800">{m.title}</p>
-                    {m.aiAvatarEnabled && (
-                      <Badge className="bg-violet-100 text-violet-700">
-                        <Icons.ai size={12} /> AI
-                      </Badge>
-                    )}
-                  </div>
-                  <p className="truncate text-xs text-slate-400">
-                    {formatDuration(m.duration)}
-                    {m.description ? ` · ${m.description}` : ''}
-                  </p>
-                </button>
-                <Button variant="ghost" size="icon" onClick={() => moduleModal.open(m)} aria-label="Edit module">
-                  <Icons.edit size={16} />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="text-rose-500 hover:bg-rose-50"
-                  onClick={() => handleDeleteModule(m)}
-                  aria-label="Delete module"
-                >
-                  <Icons.trash size={16} />
-                </Button>
-                <button
-                  onClick={() => setExpanded(expanded === m.id ? null : m.id)}
-                  className="text-slate-400"
-                  aria-label="Toggle activities"
-                >
-                  <Icons.chevronDown
-                    size={18}
-                    className={`transition-transform ${expanded === m.id ? 'rotate-180' : ''}`}
-                  />
-                </button>
-              </div>
-              <AnimatePresence initial={false}>
-                {expanded === m.id && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    className="overflow-hidden border-t border-slate-100"
-                  >
-                    <div className="bg-slate-50/50 p-4">
-                      <ActivitiesPanel moduleId={m.id} />
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </Card>
-          ))}
+                <AnimatePresence initial={false}>
+                  {isOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      className="overflow-hidden border-t border-ink-100"
+                    >
+                      <div className="bg-ink-50/60 p-4">
+                        <ActivitiesPanel moduleId={m.id} />
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </Card>
+            );
+          })}
         </div>
       )}
 
@@ -239,6 +265,15 @@ export function TrainingDetailPage() {
         }}
       />
     </div>
+  );
+}
+
+function Meta({ icon, label }: { icon: React.ReactNode; label: string }) {
+  return (
+    <span className="inline-flex items-center gap-2">
+      <span className="text-ink-400">{icon}</span>
+      {label}
+    </span>
   );
 }
 

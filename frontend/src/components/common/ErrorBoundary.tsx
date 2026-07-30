@@ -1,5 +1,5 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react';
-import { Button } from '@/components/ui';
+import { Button, Icons } from '@/components/ui';
 
 interface Props {
   children: ReactNode;
@@ -25,16 +25,19 @@ export class ErrorBoundary extends Component<Props, State> {
         this.state.error.message,
       );
       return (
-        <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 px-6 text-center">
-          <h1 className="text-3xl font-bold text-slate-900">
-            {isLoadFailure ? "Couldn't load this page" : 'Something went wrong'}
+        <div className="canvas-glow flex min-h-screen flex-col items-center justify-center bg-canvas px-6 text-center">
+          <span className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl border border-ink-200/70 bg-white text-amber-600 shadow-card">
+            <Icons.alert size={24} />
+          </span>
+          <h1 className="font-display text-[30px] font-semibold tracking-[-0.02em] text-ink-900">
+            {isLoadFailure ? 'This page failed to load' : 'Something went wrong'}
           </h1>
-          <p className="mt-2 max-w-md text-sm text-slate-500">
+          <p className="mt-3 max-w-md text-sm leading-relaxed text-ink-500">
             {isLoadFailure
-              ? 'Part of the app failed to download. Check your connection and reload.'
-              : 'An unexpected error occurred. Reloading the page usually fixes it.'}
+              ? 'Part of the app never finished downloading. Check your connection, then reload to try again.'
+              : 'An unexpected error interrupted the app. Reloading the page usually clears it.'}
           </p>
-          <Button className="mt-6" onClick={() => window.location.reload()}>
+          <Button className="mt-7" leftIcon={<Icons.refresh size={16} />} onClick={() => window.location.reload()}>
             Reload page
           </Button>
         </div>

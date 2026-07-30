@@ -92,14 +92,14 @@ export function TrainersPage() {
 
   const handleDelete = async (t: TrainerDto) => {
     const ok = await confirm({
-      title: 'Delete trainer',
+      title: 'Delete this trainer?',
       message: (
         <>
-          Delete <span className="font-medium">{fullName(t.firstName, t.lastName)}</span>? Trainings assigned to this
-          trainer may be affected.
+          <span className="font-semibold text-ink-800">{fullName(t.firstName, t.lastName)}</span> will be removed, and
+          trainings assigned to them may be affected.
         </>
       ),
-      confirmLabel: 'Delete',
+      confirmLabel: 'Delete trainer',
     });
     if (!ok) return;
     try {
@@ -119,9 +119,9 @@ export function TrainersPage() {
       render: (t) => (
         <div className="flex items-center gap-3">
           <Avatar src={t.avatar} firstName={t.firstName} lastName={t.lastName} size="sm" />
-          <div>
-            <p className="font-medium text-slate-800">{fullName(t.firstName, t.lastName)}</p>
-            <p className="text-xs text-slate-400">{t.email}</p>
+          <div className="min-w-0">
+            <p className="truncate font-bold text-ink-800">{fullName(t.firstName, t.lastName)}</p>
+            <p className="truncate text-[11.5px] font-medium text-ink-400">{t.email}</p>
           </div>
         </div>
       ),
@@ -130,13 +130,13 @@ export function TrainersPage() {
       key: 'expertise',
       header: 'Expertise',
       hideOnMobile: true,
-      render: (t) => <span className="text-slate-500">{t.expertise || '—'}</span>,
+      render: (t) => <span className="text-[13px] text-ink-500">{t.expertise || '—'}</span>,
     },
     {
       key: 'phone',
       header: 'Phone',
       hideOnMobile: true,
-      render: (t) => <span className="text-slate-500">{t.phone || '—'}</span>,
+      render: (t) => <span className="tnum text-[13px] text-ink-500">{t.phone || '—'}</span>,
     },
     {
       key: 'actions',
@@ -144,16 +144,16 @@ export function TrainersPage() {
       className: 'text-right',
       render: (t) => (
         <div className="flex justify-end gap-1">
-          <Button variant="ghost" size="icon" onClick={() => openEdit(t)} aria-label="Edit">
+          <Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => openEdit(t)} aria-label="Edit trainer">
             <Icons.edit size={17} />
           </Button>
           {isAdmin && (
             <Button
               variant="ghost"
               size="icon"
-              className="text-rose-500 hover:bg-rose-50"
+              className="h-9 w-9 text-rose-500 hover:bg-rose-50 hover:text-rose-600"
               onClick={() => handleDelete(t)}
-              aria-label="Delete"
+              aria-label="Delete trainer"
             >
               <Icons.trash size={17} />
             </Button>
@@ -166,19 +166,25 @@ export function TrainersPage() {
   return (
     <div>
       <PageHeader
+        eyebrow="Curriculum"
         title="Trainers"
-        description="Manage instructor profiles."
+        description="The instructor profiles that sit behind every training in your catalog."
         actions={
           isAdmin && (
-            <Button leftIcon={<Icons.plus size={18} />} onClick={openCreate}>
+            <Button leftIcon={<Icons.plus size={17} />} onClick={openCreate}>
               New trainer
             </Button>
           )
         }
       />
 
-      <div className="mb-4 max-w-sm">
-        <SearchInput value={list.search} onSearch={list.setSearch} placeholder="Search trainers…" />
+      <div className="surface mb-5 p-3">
+        <SearchInput
+          value={list.search}
+          onSearch={list.setSearch}
+          placeholder="Search by name or email…"
+          className="max-w-sm"
+        />
       </div>
 
       {list.error ? (
@@ -192,7 +198,9 @@ export function TrainersPage() {
           sort={list.sort}
           onSortChange={list.setSort}
           emptyTitle="No trainers yet"
-          emptyDescription={isAdmin ? 'Add your first trainer profile.' : 'No trainers to display.'}
+          emptyDescription={
+            isAdmin ? 'Add your first instructor profile to assign them to trainings.' : 'No trainers to display.'
+          }
           emptyAction={isAdmin ? <Button onClick={openCreate}>New trainer</Button> : undefined}
           pagination={{
             page: list.page,
@@ -209,6 +217,7 @@ export function TrainersPage() {
         onClose={modal.close}
         size="lg"
         title={modal.payload ? 'Edit trainer' : 'New trainer'}
+        description="This profile is shown to learners on every training the trainer leads."
         closeOnBackdrop={!isSubmitting}
         footer={
           <>
@@ -234,7 +243,7 @@ export function TrainersPage() {
           <Input
             label="Avatar URL"
             placeholder="https://…/photo.jpg"
-            hint="Link to a profile image."
+            hint="Optional — initials are used when no image is set."
             error={errors.avatar?.message}
             {...register('avatar')}
           />

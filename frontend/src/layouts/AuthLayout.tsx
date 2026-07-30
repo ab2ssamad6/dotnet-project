@@ -1,62 +1,83 @@
+import type { ReactNode } from 'react';
 import { Outlet } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { Icons } from '@/components/ui';
 import { Logo } from '@/components/common/Logo';
 
 export function AuthLayout() {
   return (
-    <div className="flex min-h-screen">
-      <div className="relative hidden w-1/2 flex-col justify-between overflow-hidden bg-brand-700 p-12 text-white lg:flex">
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute -left-20 -top-20 h-96 w-96 rounded-full bg-brand-400 blur-3xl" />
-          <div className="absolute bottom-0 right-0 h-96 w-96 rounded-full bg-brand-900 blur-3xl" />
-        </div>
-        <div className="relative flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/15">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <path d="M12 4 3 8l9 4 7-3.11V14h2V8L12 4z" fill="white" />
-            </svg>
-          </div>
-          <span className="text-lg font-bold">LMS Platform</span>
-        </div>
-        <div className="relative">
-          <h1 className="max-w-md text-4xl font-bold leading-tight">
-            Learn, train and grow — all in one place.
-          </h1>
-          <p className="mt-4 max-w-md text-brand-100">
-            A modern Learning Management System with training catalogs, progress tracking, assessments and an
-            AI-powered trainer.
-          </p>
-          <div className="mt-8 flex gap-8">
-            <Stat value="Trainings" label="Rich course catalog" />
-            <Stat value="Assessments" label="Quizzes & exams" />
-            <Stat value="AI Trainer" label="Interactive avatar" />
-          </div>
-        </div>
-        <p className="relative text-sm text-brand-200">© {new Date().getFullYear()} LMS Platform</p>
-      </div>
+    <div className="flex min-h-screen bg-canvas">
+      <aside className="relative hidden w-[46%] max-w-[620px] flex-col justify-between overflow-hidden bg-shell p-12 text-white lg:flex">
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              'radial-gradient(32rem 22rem at 8% 4%, rgb(63 173 164 / 0.30), transparent 65%), radial-gradient(28rem 20rem at 95% 92%, rgb(235 196 104 / 0.16), transparent 65%)',
+          }}
+          aria-hidden
+        />
+        <div className="pointer-events-none absolute inset-0 bg-grain opacity-[0.06] mix-blend-overlay" aria-hidden />
 
-      <div className="flex w-full flex-col items-center justify-center bg-slate-50 px-4 py-10 lg:w-1/2">
+        <div className="relative">
+          <Logo tone="light" />
+        </div>
+
+        <div className="relative">
+          <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-gold-300">Learning Studio</p>
+          <h1 className="mt-5 max-w-lg font-display text-[44px] font-semibold leading-[1.08] tracking-[-0.02em]">
+            Build training people actually finish.
+          </h1>
+          <p className="mt-5 max-w-md text-[15px] leading-relaxed text-white/65">
+            Author curricula, publish to a polished catalog, track every learner's progress and let an AI avatar tutor
+            fill the gaps between sessions.
+          </p>
+
+          <ul className="mt-10 space-y-4">
+            <Feature icon={<Icons.layers size={17} />} title="Structured curricula">
+              Trainings, modules and activities in one place
+            </Feature>
+            <Feature icon={<Icons.target size={17} />} title="Assessments that score themselves">
+              Timed quizzes and exams with instant results
+            </Feature>
+            <Feature icon={<Icons.sparkle size={17} />} title="AI avatar trainer">
+              Conversational tutoring on any published course
+            </Feature>
+          </ul>
+        </div>
+
+        <p className="relative text-xs text-white/40">© {new Date().getFullYear()} LMS Learning Studio</p>
+      </aside>
+
+      <div className="canvas-glow flex w-full flex-col items-center justify-center px-4 py-12 lg:flex-1">
         <div className="mb-8 lg:hidden">
           <Logo />
         </div>
         <motion.div
-          initial={{ opacity: 0, y: 12 }}
+          initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-          className="w-full max-w-md"
+          transition={{ duration: 0.34, ease: [0.16, 1, 0.3, 1] }}
+          className="w-full max-w-[440px]"
         >
           <Outlet />
         </motion.div>
+        <p className="mt-8 max-w-sm text-center text-[11.5px] leading-relaxed text-ink-400">
+          Need a hand? Reach out to your workspace administrator to have an account created or reset.
+        </p>
       </div>
     </div>
   );
 }
 
-function Stat({ value, label }: { value: string; label: string }) {
+function Feature({ icon, title, children }: { icon: ReactNode; title: string; children: ReactNode }) {
   return (
-    <div>
-      <p className="text-lg font-semibold">{value}</p>
-      <p className="text-xs text-brand-200">{label}</p>
-    </div>
+    <li className="flex items-start gap-3.5">
+      <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/[0.08] text-brand-300 ring-1 ring-inset ring-white/10">
+        {icon}
+      </span>
+      <span>
+        <span className="block text-sm font-bold text-white">{title}</span>
+        <span className="mt-0.5 block text-[13px] leading-snug text-white/55">{children}</span>
+      </span>
+    </li>
   );
 }

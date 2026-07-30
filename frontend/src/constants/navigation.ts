@@ -15,14 +15,15 @@ export interface NavSection {
 
 export const NAV_SECTIONS: NavSection[] = [
   {
+    heading: 'Overview',
     items: [
       { label: 'Dashboard', to: '/dashboard', icon: 'dashboard' },
-      { label: 'Browse Catalog', to: '/catalog', icon: 'grid', roles: [Role.Student] },
+      { label: 'Catalog', to: '/catalog', icon: 'grid', roles: [Role.Student] },
       { label: 'My Learning', to: '/my-learning', icon: 'book', roles: [Role.Student] },
     ],
   },
   {
-    heading: 'Content',
+    heading: 'Curriculum',
     items: [
       { label: 'Trainings', to: '/trainings', icon: 'training', roles: [Role.Administrator, Role.Trainer] },
       { label: 'Categories', to: '/categories', icon: 'category', roles: [Role.Administrator, Role.Trainer] },
@@ -34,7 +35,7 @@ export const NAV_SECTIONS: NavSection[] = [
     items: [{ label: 'Students', to: '/students', icon: 'users', roles: [Role.Administrator] }],
   },
   {
-    heading: 'Tools',
+    heading: 'Workspace',
     items: [
       { label: 'AI Trainer', to: '/ai-trainer', icon: 'ai' },
       { label: 'Settings', to: '/settings', icon: 'settings' },

@@ -11,10 +11,10 @@ interface AvatarProps {
 }
 
 const sizes = {
-  xs: 'h-7 w-7 text-[10px]',
-  sm: 'h-9 w-9 text-xs',
-  md: 'h-11 w-11 text-sm',
-  lg: 'h-16 w-16 text-lg',
+  xs: 'h-7 w-7 text-[10px] rounded-lg',
+  sm: 'h-9 w-9 text-[11px] rounded-lg',
+  md: 'h-11 w-11 text-sm rounded-xl',
+  lg: 'h-16 w-16 text-lg rounded-2xl',
 };
 
 export function Avatar({ src, firstName, lastName, name, size = 'md', className }: AvatarProps) {
@@ -25,14 +25,14 @@ export function Avatar({ src, firstName, lastName, name, size = 'md', className 
       <img
         src={src}
         alt={name ?? `${firstName ?? ''} ${lastName ?? ''}`.trim()}
-        className={cn('rounded-full object-cover ring-2 ring-white', sizes[size], className)}
+        className={cn('object-cover ring-1 ring-ink-900/10', sizes[size], className)}
       />
     );
   }
   return (
     <span
       className={cn(
-        'inline-flex items-center justify-center rounded-full bg-brand-100 font-semibold text-brand-700 ring-2 ring-white',
+        'inline-flex shrink-0 items-center justify-center bg-brand-gradient font-bold uppercase tracking-wide text-white ring-1 ring-ink-900/10',
         sizes[size],
         className,
       )}

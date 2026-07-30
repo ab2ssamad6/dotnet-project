@@ -19,12 +19,20 @@ createRoot(document.getElementById('root')!).render(
               <App />
               <Toaster
                 position="top-right"
+                gutter={10}
                 toastOptions={{
                   duration: 4000,
-                  className: 'text-sm',
-                  style: { borderRadius: '10px', background: '#1e293b', color: '#fff' },
-                  success: { iconTheme: { primary: '#10b981', secondary: '#fff' } },
-                  error: { iconTheme: { primary: '#f43f5e', secondary: '#fff' } },
+                  className: 'text-sm font-medium',
+                  style: {
+                    borderRadius: '14px',
+                    background: '#1d1b18',
+                    color: '#f7f7f5',
+                    padding: '10px 14px',
+                    boxShadow: '0 24px 48px -24px rgb(29 27 24 / 0.45)',
+                  },
+                  success: { iconTheme: { primary: '#3fada4', secondary: '#1d1b18' } },
+                  error: { iconTheme: { primary: '#fb7185', secondary: '#1d1b18' } },
+                  loading: { iconTheme: { primary: '#ebc468', secondary: '#1d1b18' } },
                 }}
               />
             </ConfirmProvider>

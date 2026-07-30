@@ -87,6 +87,7 @@ export function ModuleFormModal({ open, onClose, trainingId, module, nextOrder, 
       onClose={onClose}
       size="lg"
       title={module ? 'Edit module' : 'New module'}
+      description="Modules group the lessons, exercises and assessments learners work through in order."
       closeOnBackdrop={!isSubmitting}
       footer={
         <>
@@ -108,10 +109,10 @@ export function ModuleFormModal({ open, onClose, trainingId, module, nextOrder, 
         </div>
         <Input label="Video URL" placeholder="https://…" error={errors.videoUrl?.message} {...register('videoUrl')} />
         <Input label="Attachment URL" placeholder="https://…/handout.pdf" error={errors.attachment?.message} {...register('attachment')} />
-        <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+        <div className="rounded-xl border border-ink-200/80 bg-ink-50/70 p-4">
           <Checkbox
-            label="Enable AI Avatar"
-            description="Allow the AI Trainer to present this module."
+            label="Enable the AI avatar"
+            description="Lets the AI Trainer present and answer questions on this module."
             {...register('aiAvatarEnabled')}
           />
         </div>
