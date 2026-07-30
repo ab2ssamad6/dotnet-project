@@ -1,10 +1,11 @@
-import { lazy, Suspense } from 'react';
+import { Suspense } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { AppLayout } from '@/layouts/AppLayout';
 import { AuthLayout } from '@/layouts/AuthLayout';
 import { ProtectedRoute } from '@/routes/ProtectedRoute';
 import { RoleRoute } from '@/routes/RoleRoute';
 import { FullPageLoader } from '@/components/common/FullPageLoader';
+import { lazyPage } from '@/utils/lazyWithRetry';
 import { Role } from '@/types';
 
 // Auth pages are small and needed first — import eagerly.
@@ -15,21 +16,21 @@ import { ResetPasswordPage } from '@/pages/auth/ResetPasswordPage';
 import { VerifyEmailPage } from '@/pages/auth/VerifyEmailPage';
 import { ForbiddenPage, NotFoundPage } from '@/pages/ErrorPages';
 
-// App pages are code-split so each route loads on demand.
-const DashboardPage = lazy(() => import('@/pages/dashboard/DashboardPage').then((m) => ({ default: m.DashboardPage })));
-const CategoriesPage = lazy(() => import('@/pages/categories/CategoriesPage').then((m) => ({ default: m.CategoriesPage })));
-const TrainingsPage = lazy(() => import('@/pages/trainings/TrainingsPage').then((m) => ({ default: m.TrainingsPage })));
-const TrainingDetailPage = lazy(() =>
-  import('@/pages/trainings/TrainingDetailPage').then((m) => ({ default: m.TrainingDetailPage })),
-);
-const TrainersPage = lazy(() => import('@/pages/trainers/TrainersPage').then((m) => ({ default: m.TrainersPage })));
-const StudentsPage = lazy(() => import('@/pages/dashboard/StudentsPage').then((m) => ({ default: m.StudentsPage })));
-const CatalogPage = lazy(() => import('@/pages/student/CatalogPage').then((m) => ({ default: m.CatalogPage })));
-const MyLearningPage = lazy(() => import('@/pages/student/MyLearningPage').then((m) => ({ default: m.MyLearningPage })));
-const LearningPage = lazy(() => import('@/pages/student/LearningPage').then((m) => ({ default: m.LearningPage })));
-const AITrainerPage = lazy(() => import('@/pages/ai/AITrainerPage').then((m) => ({ default: m.AITrainerPage })));
-const SettingsPage = lazy(() => import('@/pages/settings/SettingsPage').then((m) => ({ default: m.SettingsPage })));
-const ProfilePage = lazy(() => import('@/pages/settings/ProfilePage').then((m) => ({ default: m.ProfilePage })));
+// App pages are code-split so each route loads on demand. lazyPage (not React's bare lazy) retries
+// the import and falls back to one reload, so a network blip or a redeploy mid-session cannot take
+// the whole app down through the error boundary.
+const DashboardPage = lazyPage(() => import('@/pages/dashboard/DashboardPage'), 'DashboardPage');
+const CategoriesPage = lazyPage(() => import('@/pages/categories/CategoriesPage'), 'CategoriesPage');
+const TrainingsPage = lazyPage(() => import('@/pages/trainings/TrainingsPage'), 'TrainingsPage');
+const TrainingDetailPage = lazyPage(() => import('@/pages/trainings/TrainingDetailPage'), 'TrainingDetailPage');
+const TrainersPage = lazyPage(() => import('@/pages/trainers/TrainersPage'), 'TrainersPage');
+const StudentsPage = lazyPage(() => import('@/pages/dashboard/StudentsPage'), 'StudentsPage');
+const CatalogPage = lazyPage(() => import('@/pages/student/CatalogPage'), 'CatalogPage');
+const MyLearningPage = lazyPage(() => import('@/pages/student/MyLearningPage'), 'MyLearningPage');
+const LearningPage = lazyPage(() => import('@/pages/student/LearningPage'), 'LearningPage');
+const AITrainerPage = lazyPage(() => import('@/pages/ai/AITrainerPage'), 'AITrainerPage');
+const SettingsPage = lazyPage(() => import('@/pages/settings/SettingsPage'), 'SettingsPage');
+const ProfilePage = lazyPage(() => import('@/pages/settings/ProfilePage'), 'ProfilePage');
 
 const CONTENT = [Role.Administrator, Role.Trainer];
 
