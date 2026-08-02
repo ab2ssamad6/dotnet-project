@@ -36,7 +36,7 @@ export function Logo({
               light ? 'text-white' : 'text-ink-900',
             )}
           >
-            LMS
+            AI Tutor
           </p>
           <p
             className={cn(

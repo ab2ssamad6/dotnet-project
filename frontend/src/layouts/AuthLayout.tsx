@@ -45,7 +45,7 @@ export function AuthLayout() {
           </ul>
         </div>
 
-        <p className="relative text-xs text-white/40">© {new Date().getFullYear()} LMS Learning Studio</p>
+        <p className="relative text-xs text-white/40">© {new Date().getFullYear()} AI Tutor Learning Studio</p>
       </aside>
 
       <div className="canvas-glow flex w-full flex-col items-center justify-center px-4 py-12 lg:flex-1">

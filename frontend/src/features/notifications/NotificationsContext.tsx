@@ -22,7 +22,7 @@ const NotificationsContext = createContext<NotificationsContextValue | null>(nul
 const seed: AppNotification[] = [
   {
     id: 'welcome',
-    title: 'Welcome to the LMS',
+    title: 'Welcome to AI Tutor',
     message: 'Explore trainings, track progress, and chat with the AI Trainer.',
     type: 'info',
     createdAt: new Date().toISOString(),

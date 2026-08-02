@@ -26,7 +26,7 @@ export function AppLayout() {
         </main>
         <footer className="mx-auto w-full max-w-[1360px] px-4 pb-8 sm:px-6 lg:px-10">
           <p className="border-t border-ink-200/70 pt-5 text-[11.5px] text-ink-400">
-            © {new Date().getFullYear()} LMS Learning Studio — built for trainers and their learners.
+            © {new Date().getFullYear()} AI Tutor Learning Studio — built for trainers and their learners.
           </p>
         </footer>
       </div>
